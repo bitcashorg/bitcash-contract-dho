@@ -9,14 +9,16 @@ if(${BUILD_TESTS})
     add_definitions(-DDEBUG)
 endif()
 
-add_contract(bitcashdho bitcash.dho
-bitcash.dho.cpp
+add_contract(  bitcashdho bitcash.dho
+               bitcash.dho.cpp
+               bitcash.dho.utils.cpp
+               proposal/factory.cpp
 )
 
 target_include_directories(bitcash.dho
    PUBLIC
    ${CMAKE_CURRENT_SOURCE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/tables)
+)
 
 set_target_properties(bitcash.dho
    PROPERTIES
