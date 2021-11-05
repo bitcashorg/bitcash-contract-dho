@@ -2,3 +2,6 @@
 *.log
 .DS_Store
 build
+.env
+compiled/
+node_modules/

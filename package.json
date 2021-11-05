@@ -1,0 +1,32 @@
+{
+  "name": "bitcash-dao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitcashorg/bitcash-dho-smart-contract.git"
+  },
+  "scripts": {
+    "initAll": "node scripts/commands.js init",
+    "initContract": "node scripts/commands.js run $1",
+    "test": "mocha --timeout 15000"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bitcashorg/bitcash-dho-smart-contract/issues"
+  },
+  "homepage": "https://github.com/bitcashorg/bitcash-dho-smart-contract#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "elliptic": "^6.5.4",
+    "eosjs": "^22.1.0",
+    "node-fetch": "^2.6.1",
+    "promisify": "^0.0.3",
+    "prompt-sync": "^4.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.3.2"
+  }
+}
