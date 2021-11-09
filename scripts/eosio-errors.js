@@ -1,4 +1,4 @@
-function assertError ({ error, textInside, message=null, throwError=false }) {
+function assertError ({ error, textInside, message=null, throwError=true, verbose=true }) {
 
   let eosErrorMessage
   try {
@@ -9,14 +9,14 @@ function assertError ({ error, textInside, message=null, throwError=false }) {
 
   if (eosErrorMessage.toLowerCase().includes(textInside.toLowerCase())) {
     const msg = message || eosErrorMessage
-    console.log(msg)
+    if (verbose) console.log(msg)
     return msg
   }
 
   if (throwError) {
     throw Error(eosErrorMessage)
   } else {
-    console.log(eosErrorMessage)
+    if (verbose) console.log(eosErrorMessage)
     return eosErrorMessage
   }
 

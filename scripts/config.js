@@ -13,6 +13,8 @@ const contract = (name, nameOnChain) => {
   }
 }
 
+const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
+
 const supportedChains = {
   local: 'local'
 }
@@ -23,22 +25,23 @@ const ownerByChain = {
 
 const ownerPublicKeysByChain = {
   [supportedChains.local]: {
-    owner: 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV',
-    active: 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
+    owner: devKey,
+    active: devKey
   }
 }
 
 const publicKeysByChain = {
   [supportedChains.local]: {
-    owner: 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV',
-    active: 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
+    owner: devKey,
+    active: devKey
   }
 }
 
 const contractsConfig = {
   [supportedChains.local]: [
     contract('nullcontract', 'm1nullcntrct'),
-    contract('referendums', 'referendums1')
+    contract('referendums', 'referendums1'),
+    contract('token', 'eosio.token')
   ]
 }
 
@@ -73,5 +76,6 @@ function sleep(ms) {
 }
 
 module.exports = {
-  contracts, contractNames, nameOnChainToName, owner, ownerPublicKeys, publicKeys, isLocalNode, sleep, chain, permissionsConfig
+  contracts, contractNames, nameOnChainToName, owner, ownerPublicKeys, publicKeys, 
+  isLocalNode, sleep, chain, permissionsConfig, devKey
 }

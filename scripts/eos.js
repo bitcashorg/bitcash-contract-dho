@@ -36,7 +36,7 @@ const rpc = new JsonRpc(httpEndpoint, { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
 async function transact (transaction, options={}) {
-  options = { blocksBehind: 3, expireSeconds: 30, ...options }
+  options = { blocksBehind: 3, expireSeconds: 30, expireSeconds: 2000, ...options }
   const res = await api.transact(
     transaction,
     options
