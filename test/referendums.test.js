@@ -234,7 +234,7 @@ describe('Tests for referendums', async function () {
   // test balance must be greater than zero
 
 
-  it.only('Referendum can be accepted after finishing voting period', async function () {
+  it('Referendum can be accepted after finishing voting period if it has enough favour votes', async function () {
 
     // Arrange
     const now = new Date()
@@ -298,17 +298,63 @@ describe('Tests for referendums', async function () {
 
 
   const finishRejectCases = [
-
+    { 
+      testName: 'Referendum is rejected if it has enough against votes',
+      amounts: [1000, 50000, 30000, 20000],
+      votingOrder: [ReferendumConstants.VoteFavour, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAbstain]  
+    },
+    {
+      testName: 'Referendum is rejected if it does not meet the required quorum',
+      amounts: [10000, 20000000],
+      votingOrder: [ReferendumConstants.VoteFavour, 'novote']
+    }
   ]
-  finishRejectCases.forEach(({ testName, data }) => {
+  finishRejectCases.forEach(({ testName, amounts, votingOrder }) => {
     it(testName, async function () {
 
       // Arrange
-      
+      const now = new Date()
+      now.setMilliseconds(now.getMilliseconds() + 500)
+
+      const referendum = await ReferendumsFactory.createWithDefaults({ 
+        startDate: now,
+        quorumConfig: [{ start_day: 0, percentage: 8500 }],
+        majorityConfig: [{ start_day: 0, percentage: 5500 }]
+      })
+      const actionParams = referendum.getActionParams()
+
+      await contracts.referendums.create(...actionParams, { authorization: `${referendums}@active` })
+      await sleep(1000)
+      await contracts.referendums.start(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })
+
+      for (let i = 0; i < votingOrder.length; i++) {
+        const voter = await createRandomAccount()
+
+        const assetAmount = new Asset(amounts[i], TokenUtil.tokenCode, TokenUtil.tokenPrecision)
+        await TokenUtil.issue({ amount: assetAmount.toString(), issuer: token, contract: contracts.token })
+        await contracts.token.transfer(token, voter, assetAmount.toString(), '', { authorization: `${token}@active` })
+
+        if (votingOrder[i] !== 'novote')
+          await contracts.referendums.vote(referendum.params.referendumId, voter, votingOrder[i], { authorization: `${voter}@active` })
+      }
 
       // Act
+      await contracts.referendums.finish(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })
 
       // Assert
+      const referendumTables = await rpc.get_table_rows({
+        code: referendums,
+        scope: referendums,
+        table: 'referendums',
+        json: true
+      })
+
+      expect(referendumTables.rows[0]).to.deep.include({
+        referendum_id: referendum.params.referendumId,
+        quorum_config: referendum.params.quorumConfig,
+        majority_config: referendum.params.majorityConfig,
+        status: ReferendumsFactory.Status().rejected,
+      })
 
     })
   })
