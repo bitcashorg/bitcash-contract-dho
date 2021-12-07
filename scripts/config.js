@@ -41,6 +41,7 @@ const contractsConfig = {
   [supportedChains.local]: [
     contract('nullcontract', 'm1nullcntrct'),
     contract('referendums', 'referendums1'),
+    contract('proposals', 'proposals111'),
     contract('token', 'eosio.token')
   ]
 }
@@ -64,6 +65,10 @@ const permissionsConfig = [
   {
     target: `${contractNames.referendums}@active`,
     actor: `${contractNames.referendums}@eosio.code`
+  },
+  {
+    target: `${contractNames.proposals}@active`,
+    actor: `${contractNames.proposals}@eosio.code`
   }
 ]
 

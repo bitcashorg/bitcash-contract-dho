@@ -7,15 +7,13 @@
 #include <common/data_types.hpp>
 #include <common/constants.hpp>
 
-using namespace eosio;
 
-
-CONTRACT referendums : public contract {
+CONTRACT referendums : public eosio::contract {
 
   public:
 
     using contract::contract;
-    referendums(eosio::name receiver, eosio::name code, datastream<const char*> ds)
+    referendums(eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds)
       : contract(receiver, code, ds)
         {}
 
@@ -38,7 +36,7 @@ CONTRACT referendums : public contract {
 
     ACTION finish(const uint64_t & referendum_id);
 
-    ACTION vote(const uint64_t & referendum_id, const name & voter, const name & option);
+    ACTION vote(const uint64_t & referendum_id, const eosio::name & voter, const eosio::name & option);
 
 
   private:

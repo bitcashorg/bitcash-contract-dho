@@ -28,8 +28,8 @@ ACTION referendums::create (
 
   eosio::time_point now = eosio::current_time_point();
 
-  check(start_date >= now, "can not create a referendum in the past");
-  check(end_date >= start_date, "end date must be greater or equal than the start date");
+  eosio::check(start_date >= now, "can not create a referendum in the past");
+  eosio::check(end_date >= start_date, "end date must be greater or equal than the start date");
 
   check_day_percentage(quorum_config, std::string("quorum config"));
   check_day_percentage(majority_config, std::string("majority config"));
@@ -59,11 +59,11 @@ ACTION referendums::start (const uint64_t & referendum_id)
 
   require_auth(ritr->creator);
 
-  check(ritr->status == common::referendums::status_created, 
+  eosio::check(ritr->status == common::referendums::status_created, 
     "can not start referendum, it is not in " + common::referendums::status_created.to_string() + " status");
 
   eosio::time_point now = eosio::current_time_point();
-  check(ritr->start_date <= now, "can not start referendum, it is too soon");
+  eosio::check(ritr->start_date <= now, "can not start referendum, it is too soon");
 
   referendums_t.modify(ritr, _self, [&](auto & item){
     item.status = common::referendums::status_started;
@@ -79,7 +79,7 @@ ACTION referendums::hold (const uint64_t & referendum_id)
 
   auto ritr = referendums_t.require_find(referendum_id, "referendum not found");
 
-  check(ritr->status == common::referendums::status_started, 
+  eosio::check(ritr->status == common::referendums::status_started, 
     "can not hold referendum, it is not in " + common::referendums::status_started.to_string() +  " status");
 
   referendums_t.modify(ritr, _self, [&](auto & item){
@@ -96,7 +96,7 @@ ACTION referendums::resume (const uint64_t & referendum_id)
 
   auto ritr = referendums_t.require_find(referendum_id, "referendum not found");
 
-  check(ritr->status == common::referendums::status_hold, 
+  eosio::check(ritr->status == common::referendums::status_hold, 
     "can not resume referendum, it is not in " + common::referendums::status_hold.to_string() +  " status");
 
   referendums_t.modify(ritr, _self, [&](auto & item){
@@ -113,11 +113,11 @@ ACTION referendums::finish (const uint64_t & referendum_id)
 
   require_auth(ritr->creator);
 
-  check(ritr->status == common::referendums::status_started,
+  eosio::check(ritr->status == common::referendums::status_started,
     "can not hold referendum, it is not in " + common::referendums::status_started.to_string() +  " status");
 
   eosio::time_point now = eosio::current_time_point();
-  check(ritr->end_date >= now, "can not finish referendum, it is too soon");
+  eosio::check(ritr->end_date >= now, "can not finish referendum, it is too soon");
 
   eosio::asset favour = ritr->vote_tally.at(common::referendums::vote_favour);
   eosio::asset against = ritr->vote_tally.at(common::referendums::vote_against);
@@ -125,7 +125,7 @@ ACTION referendums::finish (const uint64_t & referendum_id)
 
 
   // ========================================================= //
-  // CHECK THE TOKEN SUPPLY, WE MIGHT HAVE TO ADDAPT THIS FOR THE TOKEN CONTRACT WHEN IT IS READY
+  // eosio::check THE TOKEN SUPPLY, WE MIGHT HAVE TO ADDAPT THIS FOR THE TOKEN CONTRACT WHEN IT IS READY
 
   stats token_stats_t(common::contracts::bank_token, common::token_symbol.code().raw());
   auto stat_itr = token_stats_t.require_find(common::token_symbol.code().raw(), (common::token_symbol.code().to_string() + " token does not exist").c_str());
@@ -149,11 +149,11 @@ ACTION referendums::finish (const uint64_t & referendum_id)
 }
 
 
-ACTION referendums::vote (const uint64_t & referendum_id, const name & voter, const name & option)
+ACTION referendums::vote (const uint64_t & referendum_id, const eosio::name & voter, const eosio::name & option)
 {
   require_auth(voter);
 
-  check(option == common::referendums::vote_favour || option == common::referendums::vote_against || option == common::referendums::vote_abstain,
+  eosio::check(option == common::referendums::vote_favour || option == common::referendums::vote_against || option == common::referendums::vote_abstain,
     "invalid vote option, it must be one of " + common::referendums::vote_favour.to_string() + ", " + common::referendums::vote_against.to_string()
     + ", " + common::referendums::vote_abstain.to_string());
 
@@ -163,13 +163,13 @@ ACTION referendums::vote (const uint64_t & referendum_id, const name & voter, co
   auto ritr = referendums_t.require_find(referendum_id, "referendum not found");
   
   auto vitr = votes_t.find(voter.value);
-  check(vitr == votes_t.end(), "only one vote per account is allowed");
+  eosio::check(vitr == votes_t.end(), "only one vote per account is allowed");
 
   accounts token_accts_t(common::contracts::bank_token, voter.value);
   auto balance_itr = token_accts_t.find(common::token_symbol.code().raw());
   
-  check(balance_itr != token_accts_t.end(), "voter does not have " + common::token_symbol.code().to_string());
-  check(balance_itr->balance.amount > 0, "token balance must be greater than zero");
+  eosio::check(balance_itr != token_accts_t.end(), "voter does not have " + common::token_symbol.code().to_string());
+  eosio::check(balance_itr->balance.amount > 0, "token balance must be greater than zero");
 
   eosio::asset vote_amount = balance_itr->balance;
 
@@ -188,13 +188,13 @@ ACTION referendums::vote (const uint64_t & referendum_id, const name & voter, co
 
 void referendums::check_day_percentage (std::vector<common::types::day_percentage> & day_per, const std::string & category)
 {
-  check(day_per.size() > 0, category + " must have at least one entry");
+  eosio::check(day_per.size() > 0, category + " must have at least one entry");
   auto dp = day_per[0];
 
   for (int i = 1; i < day_per.size(); i++)
   {
-    check(day_per[i].start_day > dp.start_day, category + " start dates must be in increasing order");
-    check(day_per[i].percentage < dp.percentage, category + " percentages must be in decreasing order");
+    eosio::check(day_per[i].start_day > dp.start_day, category + " start dates must be in increasing order");
+    eosio::check(day_per[i].percentage < dp.percentage, category + " percentages must be in decreasing order");
     dp = day_per[i];
   }
 }
@@ -205,7 +205,7 @@ uint16_t referendums::get_current_percentage (
   const eosio::time_point & cutoff
 )
 {
-  check(cutoff >= start_day, "start day is in the future");
+  eosio::check(cutoff >= start_day, "start day is in the future");
 
   uint32_t num_days = (cutoff.sec_since_epoch() - start_day.sec_since_epoch()) / 86400;
 

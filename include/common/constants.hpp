@@ -1,3 +1,5 @@
+#pragma once
+
 #include <eosio/eosio.hpp>
 
 namespace common
@@ -20,5 +22,16 @@ namespace common
     constexpr eosio::name vote_favour = "favour"_n;
     constexpr eosio::name vote_against = "against"_n;
     constexpr eosio::name vote_abstain = "abstain"_n;
+  }
+
+  namespace proposals
+  {
+    constexpr eosio::name phase_discussion = "discussion"_n;
+    constexpr eosio::name phase_debate = "debate"_n;
+    constexpr eosio::name phase_voting = "voting"_n;
+    constexpr eosio::name phase_accepted = "accepted"_n;
+    constexpr eosio::name phase_rejected = "rejected"_n;
+
+    constexpr eosio::name type_main = "main"_n;
   }
 }
