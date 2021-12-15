@@ -1,9 +1,23 @@
 #include <proposals/base_proposal.hpp>
 
 
+void Proposal::check_requirements (std::map<std::string, common::types::variant_value> & args)
+{
+  eosio::name creator = util::get_attr<eosio::name>(args, "creator");
+  eosio::asset creator_balance = util::get_account_balance<proposals::token_account_tables>(common::contracts::bank_token, creator, common::token_symbol);
+
+  eosio::name scope = util::get_attr<eosio::name>(args, "type");
+  eosio::asset min_stake = util::get_setting<proposals::config_tables, eosio::asset>(contract_name, scope, common::settings::min_stake);
+
+  eosio::check(creator_balance >= min_stake, 
+    "the account " + creator.to_string() + " has " + creator_balance.to_string() + 
+    ", minimum required balance to create this proposal is " + min_stake.to_string());
+}
+
+
 void Proposal::create (std::map<std::string, common::types::variant_value> & args)
 {
-  // check for enough stake
+  check_requirements(args);
 
   proposals::proposal_tables proposals_t(contract_name, contract_name.value);
 
@@ -48,18 +62,48 @@ void Proposal::create (std::map<std::string, common::types::variant_value> & arg
 
 void Proposal::update (std::map<std::string, common::types::variant_value> & args)
 {
+  proposals::proposal_tables proposals_t(contract_name, contract_name.value);
+  
+  int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
+  auto pitr = proposals_t.require_find(proposal_id, util::to_str("proposal with id ", proposal_id, " was not found").c_str());
 
+  eosio::check(
+    pitr->current_phase == common::proposals::phase_discussion, 
+    util::to_str("can not modify proposal, it is not in ", common::proposals::phase_discussion, " phase")
+  );
+
+  proposals_t.modify(pitr, contract_name, [&](auto & item){
+    item.title = util::get_attr<std::string>(args, "title", pitr->title);
+    item.description = util::get_attr<std::string>(args, "description", pitr->description);
+    item.kpi = util::get_attr<std::string>(args, "kpi", pitr->kpi);
+    item.deadline = util::get_attr<eosio::time_point>(args, "deadline", pitr->deadline);
+  });
+
+  update_impl(args);
 }
 
 
 void Proposal::cancel (std::map<std::string, common::types::variant_value> & args)
 {
+  proposals::proposal_tables proposals_t(contract_name, contract_name.value);
+  
+  int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
+  auto pitr = proposals_t.require_find(proposal_id, util::to_str("proposal with id ", proposal_id, " was not found").c_str());
 
+  eosio::check(
+    pitr->current_phase == common::proposals::phase_discussion, 
+    util::to_str("can not modify proposal, it is not in ", common::proposals::phase_discussion, " phase")
+  );
+
+  cancel_impl(args);
+  proposals_t.erase(pitr);
 }
 
-void Proposal::move (std::map<std::string, common::types::variant_value> & args)
-{
+void Proposal::move (std::map<std::string, common::types::variant_value> & args) {}
 
-}
 
 void Proposal::create_impl (std::map<std::string, common::types::variant_value> & args) {}
+
+void Proposal::update_impl (std::map<std::string, common::types::variant_value> & args) {}
+
+void Proposal::cancel_impl (std::map<std::string, common::types::variant_value> & args) {}

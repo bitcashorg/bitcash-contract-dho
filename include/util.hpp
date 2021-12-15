@@ -14,6 +14,23 @@ namespace util
   }
 
   template<typename T>
+  eosio::asset get_account_balance (const eosio::name & code, const eosio::name & account, const eosio::symbol & symbol)
+  {
+    T token_accnts(code, account.value);
+
+    const auto & bitr = token_accnts.get(symbol.code().raw(), ("no balance object found for account " + account.to_string()).c_str());
+    return bitr.balance;
+  }
+
+  template<typename T, typename U>
+  U get_setting (const eosio::name & code, const eosio::name & scope, const eosio::name & key)
+  {
+    T table(code, scope.value);
+    auto itr = table.require_find(key.value, ("setting " + key.to_string() + " is not configured for the scope " + scope.to_string()).c_str() );
+    return std::get<U>(itr->value);
+  }
+
+  template<typename T>
   inline void delete_table (const eosio::name & code, const uint64_t & scope)
   {
     T table(code, scope);

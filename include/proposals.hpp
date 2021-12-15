@@ -3,6 +3,7 @@
 #include <eosio/asset.hpp>
 #include <eosio/eosio.hpp>
 #include <util.hpp>
+#include <common/tables/token_account.hpp>
 #include <common/tables/proposals.hpp>
 
 
@@ -15,6 +16,7 @@ CONTRACT proposals : public eosio::contract {
       : contract(receiver, code, ds)
         {}
 
+    DEFINE_TOKEN_ACCOUNT
     
     DEFINE_PROPOSALS_TABLE
 
@@ -23,14 +25,32 @@ CONTRACT proposals : public eosio::contract {
       std::vector<common::types::phase> default_phases;
 
       uint64_t primary_key () const { return type.value; }
+
+      EOSLIB_SERIALIZE(phases_config_table, (type)(default_phases))
     };
     typedef eosio::multi_index<"phasesconf"_n, phases_config_table> phases_config_tables;
     
 
-    ACTION reset();
+    TABLE config_table {
+      eosio::name setting;
+      common::types::variant_value value;
+
+      uint64_t primary_key () const { return setting.value; }
+
+      EOSLIB_SERIALIZE(config_table, (setting)(value))
+    };
+    typedef eosio::multi_index<"config"_n, config_table> config_tables;
+
+
 
     ACTION create(std::map<std::string, common::types::variant_value> & args);
 
+    ACTION update(std::map<std::string, common::types::variant_value> & args);
+
+    ACTION cancel(const uint64_t & proposal_id);
+
     ACTION setpconfig(const eosio::name & type, std::vector<common::types::phase_config> & default_phases);
+
+    ACTION setgparam(const eosio::name & scope, const eosio::name & setting, common::types::variant_value & value);
 
 };

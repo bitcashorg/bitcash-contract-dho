@@ -11,6 +11,11 @@ namespace common
     constexpr eosio::name bank_token = "eosio.token"_n;
   }
 
+  namespace settings
+  {
+    constexpr eosio::name min_stake = "minstake"_n;
+  }
+
   namespace referendums
   {
     constexpr eosio::name status_created = "created"_n;
@@ -28,6 +33,7 @@ namespace common
   {
     constexpr eosio::name phase_discussion = "discussion"_n;
     constexpr eosio::name phase_debate = "debate"_n;
+    constexpr eosio::name phase_debate_voting = "debatevoting"_n;
     constexpr eosio::name phase_voting = "voting"_n;
     constexpr eosio::name phase_accepted = "accepted"_n;
     constexpr eosio::name phase_rejected = "rejected"_n;

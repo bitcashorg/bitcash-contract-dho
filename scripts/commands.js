@@ -70,8 +70,6 @@ async function run (contractName) {
     path: `./src/${contract.name}.cpp`      
   })
 
-  await manageDeployment(contract)
-
 }
 
 async function main () {

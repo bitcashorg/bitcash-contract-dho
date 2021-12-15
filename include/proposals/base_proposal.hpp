@@ -13,13 +13,18 @@ class Proposal {
     virtual void create(std::map<std::string, common::types::variant_value> & args);
     virtual void update(std::map<std::string, common::types::variant_value> & args);
     virtual void cancel(std::map<std::string, common::types::variant_value> & args);
-    virtual void move(std::map<std::string, common::types::variant_value> & args);
+    virtual void move(std::map<std::string, common::types::variant_value> & args) = 0;
 
   protected:
-  
+
+    virtual void check_requirements(std::map<std::string, common::types::variant_value> & args);
+
     virtual void create_impl(std::map<std::string, common::types::variant_value> & args);
+    virtual void update_impl(std::map<std::string, common::types::variant_value> & args);
+    virtual void cancel_impl(std::map<std::string, common::types::variant_value> & args);
 
     proposals & m_contract;
+
     eosio::name contract_name;
 
 };

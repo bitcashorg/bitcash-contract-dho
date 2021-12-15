@@ -8,6 +8,7 @@ const ProposalConstants = {
 class Proposal {
 
   constructor ({
+    proposalId,
     type,
     creator,
     title,
@@ -19,6 +20,7 @@ class Proposal {
     ...specialAttributes
   }) {
     this.params = {
+      proposalId,
       type,
       creator,
       title,
@@ -46,7 +48,7 @@ class Proposal {
   }
 
   getActionParams () {
-    return [
+    const params = [
       { key: 'type', value: ['name', this.params.type] },
       { key: 'creator', value: ['name', this.params.creator] },
       { key: 'title', value: ['string', this.params.title] },
@@ -57,6 +59,12 @@ class Proposal {
       ...this.formatPhases(),
       ...this.formatSpecialAttributes()
     ]
+
+    if (this.params.proposalId) {
+      params.push({ key: 'proposal_id', value: ['int64', this.params.proposalId] })
+    }
+
+    return params
   }
 }
 
@@ -64,6 +72,7 @@ class Proposal {
 class ProposalsFactory {
 
   static createEntry ({
+    proposalId,
     type,
     creator,
     title,
@@ -75,6 +84,7 @@ class ProposalsFactory {
     ...specialAttributes
   }) {
     return new Proposal({
+      proposalId,
       type,
       creator,
       title,
@@ -87,21 +97,31 @@ class ProposalsFactory {
     })
   }
 
-  static _getProposalDefaults () {
+  static _getProposalDefaults ({
+    title,
+    description,
+    kpi,
+    deadline
+  }) {
 
     const d = new Date()
     d.setDate(d.getDate() + 10)
 
     return {
-      title: 'default title',
-      description: 'default description',
-      kpi: 'default kpis',
-      deadline: formatTimePoint(d)
+      title: title || 'default title',
+      description: description || 'default description',
+      kpi: kpi || 'default kpis',
+      deadline: deadline || formatTimePoint(d)
     }
   }
 
   static async createMainWithDefaults ({
+    proposalId,
     creator,
+    title,
+    description,
+    kpi,
+    deadline,
     budget
   }) {
     if (!creator) {
@@ -114,7 +134,13 @@ class ProposalsFactory {
     }
 
     return ProposalsFactory.createEntry({
-      ...this._getProposalDefaults(),
+      ...this._getProposalDefaults({
+        title,
+        description,
+        kpi,
+        deadline
+      }),
+      proposalId,
       type: ProposalConstants.TypeMain,
       creator,
       budget: { key: 'budget', value: ['asset', budget] },

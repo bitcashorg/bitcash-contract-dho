@@ -6,8 +6,6 @@
 #include "proposals/main_proposal.cpp"
 
 
-ACTION proposals::reset () 
-{}
 
 ACTION proposals::create (std::map<std::string, common::types::variant_value> & args)
 {
@@ -19,6 +17,33 @@ ACTION proposals::create (std::map<std::string, common::types::variant_value> & 
   std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, type));
   prop->create(args);
 }
+
+ACTION proposals::update (std::map<std::string, common::types::variant_value> & args)
+{
+  int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
+
+  proposal_tables proposals_t(get_self(), get_self().value);
+  auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
+
+  require_auth(pitr->creator);
+
+  std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
+  prop->update(args);
+}
+
+ACTION proposals::cancel (const uint64_t & proposal_id)
+{
+  proposal_tables proposals_t(get_self(), get_self().value);
+  auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
+
+  require_auth(pitr->creator);
+
+  std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
+
+  std::map<std::string, common::types::variant_value> args = { {"proposal_id", int64_t(proposal_id)} };
+  prop->cancel(args);
+}
+
 
 ACTION proposals::setpconfig (const eosio::name & proposal_type, std::vector<common::types::phase_config> & default_phases)
 {
@@ -48,6 +73,29 @@ ACTION proposals::setpconfig (const eosio::name & proposal_type, std::vector<com
   {
     pconfig_t.modify(pcitr, _self, [&](auto & item){
       item.default_phases = phases;
+    });
+  }
+}
+
+
+ACTION proposals::setgparam (const eosio::name & scope, const eosio::name & setting, common::types::variant_value & value)
+{
+  require_auth(get_self());
+
+  config_tables config_t(get_self(), scope.value);
+  auto citr = config_t.find(setting.value);
+
+  if (citr == config_t.end())
+  {
+    config_t.emplace(_self, [&](auto & item){
+      item.setting = setting;
+      item.value = value;
+    });
+  }
+  else
+  {
+    config_t.modify(citr, _self, [&](auto & item){
+      item.value = value;
     });
   }
 }

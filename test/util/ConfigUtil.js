@@ -4,10 +4,19 @@ class ConfigUtil {
 
   constructor (contract) {
     this.contract = contract
+    this.config = {}
+  }
+
+  async setConfig (config) {
+    this.config = config
   }
 
   async setPhases (params, auth) {
     await this.contract.setpconfig(...params, { authorization: `${auth}@active` })
+  }
+
+  async setGeneralConfig (params, auth) {
+    await this.contract.setgparam(...params, { authorization: `${auth}@active` })
   }
 
 }
@@ -42,10 +51,6 @@ class ConfigBuilder {
 
 class ConfigPhasesBuilder extends ConfigBuilder {
 
-  constructor (contract, authorization) {
-    super(contract, authorization)
-  }
-
   async create ({ path, config }) {
     const conf = this._getConfig({ 
       path, 
@@ -70,6 +75,41 @@ class ConfigPhasesBuilder extends ConfigBuilder {
 
       await this.configUtil.setPhases(params, this.authorization)
     }
+
+    this.configUtil.setConfig(conf)
+
+    return this.configUtil
+  }
+
+}
+
+class ConfigGeneralBuilder extends ConfigBuilder {
+
+  async create ({ path, config }) {
+    const conf = this._getConfig({
+      path,
+      config,
+      defaultPath: join(__dirname, '../examples/generalConfig.json')
+    })
+
+    const keys = Object.keys(conf)
+    for (const key of keys) {
+      const params = [key]
+      const constantsInfo = conf[key]
+
+      const constants = Object.keys(constantsInfo)
+
+      for (const c of constants) {
+        params.push(c)
+        params.push(constantsInfo[c])
+      }
+
+      await this.configUtil.setGeneralConfig(params, this.authorization)
+    }
+
+    this.configUtil.setConfig(conf)
+
+    return this.configUtil
   }
 
 }
@@ -86,4 +126,4 @@ class ConfigEngineer {
 
 }
 
-module.exports = { ConfigUtil, ConfigEngineer, ConfigPhasesBuilder }
+module.exports = { ConfigUtil, ConfigEngineer, ConfigPhasesBuilder, ConfigGeneralBuilder }
