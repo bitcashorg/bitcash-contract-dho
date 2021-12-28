@@ -3,6 +3,9 @@
 #include <proposals.hpp>
 #include "../common/data_types.hpp"
 
+#include "../transitions/base_transition.hpp"
+
+
 class Proposal {
 
   public:
@@ -13,7 +16,7 @@ class Proposal {
     virtual void create(std::map<std::string, common::types::variant_value> & args);
     virtual void update(std::map<std::string, common::types::variant_value> & args);
     virtual void cancel(std::map<std::string, common::types::variant_value> & args);
-    virtual void move(std::map<std::string, common::types::variant_value> & args) = 0;
+    virtual void move(std::map<std::string, common::types::variant_value> & args);
 
   protected:
 

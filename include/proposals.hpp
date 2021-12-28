@@ -49,6 +49,8 @@ CONTRACT proposals : public eosio::contract {
 
     ACTION cancel(const uint64_t & proposal_id);
 
+    ACTION move(const uint64_t & proposal_id);
+
     ACTION setpconfig(const eosio::name & type, std::vector<common::types::phase_config> & default_phases);
 
     ACTION setgparam(const eosio::name & scope, const eosio::name & setting, common::types::variant_value & value);

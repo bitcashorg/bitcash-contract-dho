@@ -99,7 +99,13 @@ void Proposal::cancel (std::map<std::string, common::types::variant_value> & arg
   proposals_t.erase(pitr);
 }
 
-void Proposal::move (std::map<std::string, common::types::variant_value> & args) {}
+void Proposal::move (std::map<std::string, common::types::variant_value> & args)
+{
+  int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
+
+  Transition * transition = new Transition(m_contract);
+  transition->execute(proposal_id);
+}
 
 
 void Proposal::create_impl (std::map<std::string, common::types::variant_value> & args) {}

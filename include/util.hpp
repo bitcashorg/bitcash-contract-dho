@@ -62,6 +62,12 @@ namespace util
     return std::get<T>(itr->second);
   }
 
+  int64_t day_diff (const eosio::time_point & from, const eosio::time_point & to)
+  {
+    int64_t microseconds = to.time_since_epoch().count() - from.time_since_epoch().count();
+    return microseconds / int64_t(86400000000);
+  }
+
   namespace detail 
   {
 

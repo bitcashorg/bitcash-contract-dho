@@ -189,4 +189,35 @@ describe('Tests for main proposals', async function () {
 
   })
 
+  it.only('The main proposal can move from draft to debate', async function () {
+
+    // Arrange
+    const proposal = await ProposalsFactory.createMainWithDefaults({})
+
+    const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
+    const configUtil = await configEngineerGeneral.execute({})
+
+    const minstake = configUtil.config['main']['minstake'][1]
+
+    await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
+    await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
+    
+    await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
+
+
+    // Act
+    await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
+
+
+    // Assert
+    const proposalsTable = await rpc.get_table_rows({
+      code: proposals,
+      scope: proposals,
+      table: 'proposals',
+      json: true
+    })
+    console.log(JSON.stringify(proposalsTable, null, 4))
+
+  })
+
 })

@@ -5,6 +5,11 @@
 #include "proposals/base_proposal.cpp"
 #include "proposals/main_proposal.cpp"
 
+#include "phases/base_phase.cpp"
+#include "phases/dialog_phase.cpp"
+#include "phases/draft_phase.cpp"
+
+#include "transitions/base_transition.cpp"
 
 
 ACTION proposals::create (std::map<std::string, common::types::variant_value> & args)
@@ -44,6 +49,18 @@ ACTION proposals::cancel (const uint64_t & proposal_id)
   prop->cancel(args);
 }
 
+ACTION proposals::move (const uint64_t & proposal_id)
+{
+  proposal_tables proposals_t(get_self(), get_self().value);
+  auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
+
+  require_auth(pitr->creator);
+
+  std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
+
+  std::map<std::string, common::types::variant_value> args = { {"proposal_id", int64_t(proposal_id)} };
+  prop->move(args);
+}
 
 ACTION proposals::setpconfig (const eosio::name & proposal_type, std::vector<common::types::phase_config> & default_phases)
 {

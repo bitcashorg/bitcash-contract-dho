@@ -39,5 +39,14 @@ namespace common
     constexpr eosio::name phase_rejected = "rejected"_n;
 
     constexpr eosio::name type_main = "main"_n;
+
+
+    namespace phases
+    {
+      constexpr eosio::name no_phase = "nophase"_n;
+      constexpr eosio::name type_draft = "draft"_n;
+      constexpr eosio::name type_dialog = "dialog"_n;
+      constexpr eosio::name type_voting = "voting"_n;
+    }
   }
 }
