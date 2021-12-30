@@ -15,7 +15,10 @@ void Phase::end ()
 
 bool Phase::is_ready_to_start ()
 {
-  return true;
+  proposals::proposal_tables proposal_t(contract_name, contract_name.value);
+  auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
+
+  return pitr->status == common::proposals::status_open;
 }
 
 bool Phase::is_ready_to_end ()
@@ -54,6 +57,16 @@ void Phase::save_phase_end ()
     auto & p = item.phases[position];
     p.end_date = eosio::current_time_point();
     item.current_phase = common::proposals::phases::no_phase;
+  });
+}
+
+void Phase::change_proposal_status (const eosio::name & status)
+{
+  proposals::proposal_tables proposal_t(contract_name, contract_name.value);
+  auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
+
+  proposal_t.modify(pitr, contract_name, [&](auto & item){
+    item.status = status;
   });
 }
 

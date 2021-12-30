@@ -165,7 +165,7 @@ ACTION referendums::vote (const uint64_t & referendum_id, const eosio::name & vo
   auto vitr = votes_t.find(voter.value);
   eosio::check(vitr == votes_t.end(), "only one vote per account is allowed");
 
-  accounts token_accts_t(common::contracts::bank_token, voter.value);
+  token_account_tables token_accts_t(common::contracts::bank_token, voter.value);
   auto balance_itr = token_accts_t.find(common::token_symbol.code().raw());
   
   eosio::check(balance_itr != token_accts_t.end(), "voter does not have " + common::token_symbol.code().to_string());

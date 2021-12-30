@@ -2,6 +2,7 @@
 
 #include "draft_phase.hpp"
 #include "dialog_phase.hpp"
+#include "voting_phase.hpp"
 
 #include "../common/constants.hpp"
 
@@ -17,6 +18,9 @@ class PhasesFactory {
 
         case common::proposals::phases::type_dialog.value:
           return new DialogPhase(proposal_id, contract, position);
+
+        case common::proposals::phases::type_voting.value:
+          return new VotingPhase(proposal_id, contract, position);
 
         default:
           break;

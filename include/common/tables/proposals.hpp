@@ -8,6 +8,7 @@
     std::string description; \
     std::string kpi; \
     eosio::time_point deadline; \
+    eosio::name status; \
     eosio::name current_phase; \
     std::vector<common::types::phase> phases; \
     uint64_t parent; \
@@ -18,7 +19,7 @@
 \
     EOSLIB_SERIALIZE( \
       proposal_table, \
-      (proposal_id)(creator)(type)(title)(description)(kpi)(deadline) \
+      (proposal_id)(creator)(type)(title)(description)(kpi)(deadline)(status) \
       (current_phase)(phases)(parent)(awaiting)(special_attributes) \
     ) \
   }; \

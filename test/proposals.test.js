@@ -9,7 +9,7 @@ const { ConfigPhasesBuilder, ConfigGeneralBuilder, ConfigEngineer } = require('.
 
 const expect = require('chai').expect
 
-const { proposals, token } = contractNames
+const { proposals, token, referendums } = contractNames
 
 
 describe('Tests for main proposals', async function () {
@@ -27,6 +27,7 @@ describe('Tests for main proposals', async function () {
     await EnvironmentUtil.initNode()
     await sleep(4000)
     await EnvironmentUtil.deployContracts(configContracts)
+    await EnvironmentUtil.updatePermissions()
 
     contracts = await getContracts([proposals, token])
 
@@ -189,34 +190,81 @@ describe('Tests for main proposals', async function () {
 
   })
 
-  it.only('The main proposal can move from draft to debate', async function () {
+  const phasesTests = [
+    {
+      testDescription: 'The main proposal can move from draft to debate',
+      data: {
+        from: 'draft',
+        to: 'debate'
+      }
+    },
+    {
+      testDescription: 'The main proposal can move from debate to debatevoting',
+      data: {
+        from: 'debate',
+        to: 'debatevoting'
+      }
+    }
+  ]
 
-    // Arrange
-    const proposal = await ProposalsFactory.createMainWithDefaults({})
+  phasesTests.forEach(({ testDescription, data }, index) => {
 
-    const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
-    const configUtil = await configEngineerGeneral.execute({})
+    it.only(testDescription, async function () {
 
-    const minstake = configUtil.config['main']['minstake'][1]
+      // Arrange
+      const phasesConfig = require('./examples/phasesConfig.json')
+      const mainPhasesConfig = phasesConfig.main
 
-    await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
-    await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
-    
-    await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
+      const NO_CHECKING_FOR_DURATION_DAYS = -1
 
+      const phases = mainPhasesConfig.map(pc => {
+        return {
+          ...pc,
+          durationDays: NO_CHECKING_FOR_DURATION_DAYS
+        }
+      })
 
-    // Act
-    await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
+      const proposal = await ProposalsFactory.createMainWithDefaults({
+        phases
+      })
+  
+      const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
+      const configUtil = await configEngineerGeneral.execute({})
+  
+      const minstake = configUtil.config['main']['minstake'][1]
+  
+      await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
+      await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
+      
+      await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
 
+      for (let i = 0; i < index; i++) {
+        await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
+      }
+  
+  
+      // Act
+      await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
+  
+  
+      // Assert
+      const proposalsTable = await rpc.get_table_rows({
+        code: proposals,
+        scope: proposals,
+        table: 'proposals',
+        json: true
+      })
+      console.log(JSON.stringify(proposalsTable, null, 4))
 
-    // Assert
-    const proposalsTable = await rpc.get_table_rows({
-      code: proposals,
-      scope: proposals,
-      table: 'proposals',
-      json: true
+      const referendumsTable = await rpc.get_table_rows({
+        code: referendums,
+        scope: referendums,
+        table: 'referendums',
+        json: true
+      })
+      console.log(JSON.stringify(referendumsTable, null, 4))
+  
     })
-    console.log(JSON.stringify(proposalsTable, null, 4))
 
   })
 

@@ -43,7 +43,7 @@ namespace util
 
   template<typename T>
   T get_attr (
-    std::map<std::string, common::types::variant_value> & args, 
+    const std::map<std::string, common::types::variant_value> & args, 
     const std::string attribute, 
     std::optional<common::types::variant_value> default_value = std::nullopt
   )

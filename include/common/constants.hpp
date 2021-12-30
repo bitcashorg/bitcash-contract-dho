@@ -5,10 +5,13 @@
 namespace common
 {
   const eosio::symbol token_symbol = eosio::symbol("BANK", 4);
+  const int64_t microseconds_per_day = 86400000000;
 
   namespace contracts
   {
     constexpr eosio::name bank_token = "eosio.token"_n;
+    constexpr eosio::name proposals = "proposals111"_n;
+    constexpr eosio::name referendums = "referendums1"_n;
   }
 
   namespace settings
@@ -31,6 +34,12 @@ namespace common
 
   namespace proposals
   {
+    constexpr eosio::name type_main = "main"_n;
+
+    constexpr eosio::name status_open = "open"_n;
+    constexpr eosio::name status_accepted = "accepted"_n;
+    constexpr eosio::name status_rejected = "rejected"_n;
+
     constexpr eosio::name phase_discussion = "discussion"_n;
     constexpr eosio::name phase_debate = "debate"_n;
     constexpr eosio::name phase_debate_voting = "debatevoting"_n;
@@ -38,15 +47,14 @@ namespace common
     constexpr eosio::name phase_accepted = "accepted"_n;
     constexpr eosio::name phase_rejected = "rejected"_n;
 
-    constexpr eosio::name type_main = "main"_n;
-
-
     namespace phases
     {
       constexpr eosio::name no_phase = "nophase"_n;
       constexpr eosio::name type_draft = "draft"_n;
       constexpr eosio::name type_dialog = "dialog"_n;
       constexpr eosio::name type_voting = "voting"_n;
+
+      constexpr int64_t undefined_duration_days = -1;
     }
   }
 }

@@ -69,6 +69,10 @@ const permissionsConfig = [
   {
     target: `${contractNames.proposals}@active`,
     actor: `${contractNames.proposals}@eosio.code`
+  },
+  {
+    target: `${contractNames.referendums}@active`,
+    actor: `${contractNames.proposals}@active`
   }
 ]
 

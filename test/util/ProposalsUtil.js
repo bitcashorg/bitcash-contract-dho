@@ -36,6 +36,17 @@ class Proposal {
   formatPhases () {
     const phases = this.params.phases
     if (phases === undefined) return []
+
+    const formattedPhases = []
+    for (const phase of phases) {
+      formattedPhases.push({ key: `phase_${phase.phaseName}_name`, value: ['name', phase.phaseName] })
+      formattedPhases.push({ key: `phase_${phase.phaseName}_duration_days`, value: ['int64', phase.durationDays] })
+      formattedPhases.push({ key: `phase_${phase.phaseName}_type`, value: ['name', phase.type] })
+    }
+
+    console.log(formattedPhases)
+
+    return formattedPhases
   }
 
   formatSpecialAttributes () {
@@ -122,7 +133,8 @@ class ProposalsFactory {
     description,
     kpi,
     deadline,
-    budget
+    budget,
+    phases
   }) {
     if (!creator) {
       creator = await createRandomAccount() 
@@ -144,7 +156,8 @@ class ProposalsFactory {
       type: ProposalConstants.TypeMain,
       creator,
       budget: { key: 'budget', value: ['asset', budget] },
-      parent: 0
+      parent: 0,
+      phases
     })
   }
 

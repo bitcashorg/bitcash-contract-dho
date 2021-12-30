@@ -5,6 +5,7 @@
 #include <util.hpp>
 #include <common/tables/token_account.hpp>
 #include <common/tables/proposals.hpp>
+#include <common/tables/referendums.hpp>
 
 
 CONTRACT proposals : public eosio::contract {
@@ -19,6 +20,8 @@ CONTRACT proposals : public eosio::contract {
     DEFINE_TOKEN_ACCOUNT
     
     DEFINE_PROPOSALS_TABLE
+
+    DEFINE_REFERENDUMS_TABLE
 
     TABLE phases_config_table {
       eosio::name type;

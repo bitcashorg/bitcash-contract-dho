@@ -36,6 +36,7 @@ void Proposal::create (std::map<std::string, common::types::variant_value> & arg
     item.description = util::get_attr<std::string>(args, "description");
     item.kpi = util::get_attr<std::string>(args, "kpi");
     item.deadline = util::get_attr<eosio::time_point>(args, "deadline");
+    item.status = common::proposals::status_open;
 
     bool first_phase = true;
     for (auto & default_phase : pcitr->default_phases)

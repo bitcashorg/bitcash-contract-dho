@@ -2,6 +2,7 @@ const { exec } = require('child_process')
 const { promisify } = require('util')
 
 const { createAccount, deployContract } = require('../../scripts/deploy')
+const { updatePermissions } = require('../../scripts/permissions')
 const { accountExists, contractRunningSameCode } = require('../../scripts/eosio-errors')
 const { devKey } = require('../../scripts/config')
 
@@ -59,6 +60,10 @@ class EnvironmentUtil {
         contractRunningSameCode(err)
       }
     }
+  }
+
+  static async updatePermissions () {
+    await updatePermissions()
   }
 
   static async killNode () {

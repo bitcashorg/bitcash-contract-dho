@@ -50,6 +50,17 @@ namespace common
           .end_date = end_date.value_or(null_time_point)
         };
       }
+
+      static day_percentage create_day_percentage_entry (
+        uint16_t start_day,
+        uint16_t percentage
+      )
+      {
+        return day_percentage {
+          .start_day = start_day,
+          .percentage = percentage
+        };
+      }
     };
   }
 }

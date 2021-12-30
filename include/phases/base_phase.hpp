@@ -32,5 +32,6 @@ class Phase {
 
     void save_phase_start();
     void save_phase_end();
+    void change_proposal_status(const eosio::name & status);
 
 };

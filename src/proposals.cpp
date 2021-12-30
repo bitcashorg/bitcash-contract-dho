@@ -8,6 +8,7 @@
 #include "phases/base_phase.cpp"
 #include "phases/dialog_phase.cpp"
 #include "phases/draft_phase.cpp"
+#include "phases/voting_phase.cpp"
 
 #include "transitions/base_transition.cpp"
 
