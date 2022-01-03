@@ -38,12 +38,19 @@ void VotingPhase::start_impl ()
     eosio::name("create"),
     std::make_tuple(
       referendum_id,
-      contract_name,
+      pitr->creator,
       phase.start_date,
       eosio::time_point(eosio::microseconds(end_timestamp)),
       quorum_config,
       majority_config
     )
+  ).send();
+
+  eosio::action(
+    eosio::permission_level(common::contracts::referendums, "active"_n),
+    common::contracts::referendums,
+    eosio::name("start"),
+    std::make_tuple(referendum_id)
   ).send();
 }
 
@@ -66,9 +73,13 @@ void VotingPhase::end_impl ()
       change_proposal_status(common::proposals::status_accepted);
     }
   }
-  else
+  else if (ritr->status == common::referendums::status_rejected)
   {
     change_proposal_status(common::proposals::status_rejected);
+  }
+  else
+  {
+    eosio::check(false, "proposal can not end, the associated referendum is still in progress");
   }
 
   save_phase_end();

@@ -6,10 +6,53 @@ const { ProposalsFactory } = require('./util/ProposalsUtil')
 const { TokenUtil } = require('./util/TokenUtil')
 const { EnvironmentUtil } = require('./util/EnvironmentUtil')
 const { ConfigPhasesBuilder, ConfigGeneralBuilder, ConfigEngineer } = require('./util/ConfigUtil')
+const { ReferendumConstants } = require('./util/ReferendumsUtil')
 
 const expect = require('chai').expect
 
 const { proposals, token, referendums } = contractNames
+
+
+
+async function passReferendum (contracts, proposalId) {
+  const amounts = [100000, 50000]
+
+  const proposalsTable = await rpc.get_table_rows({
+    code: proposals,
+    scope: proposals,
+    table: 'proposals',
+    json: true
+  })
+
+  const proposal = proposalsTable.rows.filter(r => r.proposal_id === proposalId)[0]
+  let referendumId = 0
+
+  for (let i = proposal.special_attributes.length - 1; i >= 0; i--) {
+    const { key, value } = proposal.special_attributes[i]
+
+    if (key.includes('referendum_id')) {
+      referendumId = value[1]
+      break
+    }
+  }
+
+  console.log('referendum found:', referendumId)
+
+  if (referendumId === 0) return
+
+  for (let i = 0; i < amounts.length; i++) {
+    const voter = await createRandomAccount()
+
+    const assetAmount = new Asset(amounts[i], TokenUtil.tokenCode, TokenUtil.tokenPrecision)
+    await TokenUtil.issue({ amount: assetAmount.toString(), issuer: token, contract: contracts.token })
+    await contracts.token.transfer(token, voter, assetAmount.toString(), '', { authorization: `${token}@active` })
+
+    await contracts.referendums.vote(referendumId, voter, ReferendumConstants.VoteFavour, { authorization: `${voter}@active` })
+  }
+
+  await contracts.referendums.finish(referendumId, { authorization: `${referendums}@active` })
+}
+
 
 
 describe('Tests for main proposals', async function () {
@@ -29,7 +72,7 @@ describe('Tests for main proposals', async function () {
     await EnvironmentUtil.deployContracts(configContracts)
     await EnvironmentUtil.updatePermissions()
 
-    contracts = await getContracts([proposals, token])
+    contracts = await getContracts([proposals, token, referendums])
 
     await TokenUtil.create({ 
       issuer: token, 
@@ -204,12 +247,26 @@ describe('Tests for main proposals', async function () {
         from: 'debate',
         to: 'debatevoting'
       }
+    },
+    {
+      testDescription: 'The main proposal can move from debatevoting to propvoting',
+      data: {
+        from: 'debatevoting',
+        to: 'propvoting'
+      }
+    },
+    {
+      testDescription: 'The main proposal can finish propvoting and change status to accepted',
+      data: {
+        from: 'propvoting',
+        to: ''
+      }
     }
   ]
 
   phasesTests.forEach(({ testDescription, data }, index) => {
 
-    it.only(testDescription, async function () {
+    it(testDescription, async function () {
 
       // Arrange
       const phasesConfig = require('./examples/phasesConfig.json')
@@ -238,9 +295,13 @@ describe('Tests for main proposals', async function () {
       
       await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
 
+
       for (let i = 0; i < index; i++) {
+        await passReferendum(contracts, 1)
         await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
       }
+
+      await passReferendum(contracts, 1)
   
   
       // Act

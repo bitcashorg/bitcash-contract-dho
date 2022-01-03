@@ -57,7 +57,7 @@ ACTION referendums::start (const uint64_t & referendum_id)
 
   auto ritr = referendums_t.require_find(referendum_id, "referendum not found");
 
-  require_auth(ritr->creator);
+  check_authority(ritr->creator);
 
   eosio::check(ritr->status == common::referendums::status_created, 
     "can not start referendum, it is not in " + common::referendums::status_created.to_string() + " status");
@@ -111,13 +111,17 @@ ACTION referendums::finish (const uint64_t & referendum_id)
 
   auto ritr = referendums_t.require_find(referendum_id, "referendum not found");
 
-  require_auth(ritr->creator);
+  eosio::name auth = check_authority(ritr->creator);
+
+  eosio::time_point now = eosio::current_time_point();
+
+  if (auth != get_self())
+  {
+    eosio::check(ritr->end_date <= now, "can not finish referendum, it is too soon");
+  }
 
   eosio::check(ritr->status == common::referendums::status_started,
     "can not hold referendum, it is not in " + common::referendums::status_started.to_string() +  " status");
-
-  eosio::time_point now = eosio::current_time_point();
-  eosio::check(ritr->end_date >= now, "can not finish referendum, it is too soon");
 
   eosio::asset favour = ritr->vote_tally.at(common::referendums::vote_favour);
   eosio::asset against = ritr->vote_tally.at(common::referendums::vote_against);
@@ -218,4 +222,11 @@ uint16_t referendums::get_current_percentage (
   }
 
   return (day_per.back()).percentage;
+}
+
+eosio::name referendums::check_authority (const eosio::name & account)
+{
+  eosio::name auth = eosio::has_auth(account) ? account : get_self();
+  require_auth(auth);
+  return auth;
 }

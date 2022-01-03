@@ -42,8 +42,8 @@ CONTRACT referendums : public eosio::contract {
   private:
 
     void check_day_percentage(std::vector<common::types::day_percentage> & day_per, const std::string & category);
-
     uint16_t get_current_percentage(const std::vector<common::types::day_percentage> & day_per, const eosio::time_point & start_day, const eosio::time_point & cutoff);
+    eosio::name check_authority(const eosio::name & account);
 
 
     DEFINE_REFERENDUMS_TABLE
