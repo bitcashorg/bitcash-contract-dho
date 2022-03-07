@@ -5,5 +5,9 @@
 
   "amendment": {
     "minstake": ["asset", "10.0000 BANK"]
+  },
+
+  "extenddebate": {
+    "minstake": ["asset", "10.0000 BANK"]
   }
 }
