@@ -8,6 +8,10 @@ void VotingPhase::start_impl ()
   proposals::proposal_tables proposal_t(contract_name, contract_name.value);
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
+  auto ppitr = proposal_t.find(pitr->parent);
+
+  check(ppitr->awaiting.size() != 0, "Can not start voting, we are waiting another proposal!");
+
   auto phase = pitr->phases[position];
 
   proposals::referendum_tables referendums_t(common::contracts::referendums, common::contracts::referendums.value);
@@ -71,6 +75,7 @@ void VotingPhase::end_impl ()
     if (position + 1 == pitr->phases.size())
     {
       change_proposal_status(common::proposals::status_accepted);
+      if (pitr->type != common::proposals::type_main ) { update_parent(); }
     }
   }
   else if (ritr->status == common::referendums::status_rejected)

@@ -70,3 +70,18 @@ void Phase::change_proposal_status (const eosio::name & status)
   });
 }
 
+void Phase::update_parent()
+{
+  proposals::proposal_tables proposal_t(contract_name, contract_name.value);
+  auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
+
+  check(pitr->type != common::proposals::type_main, "Main proposals don't have parents!");
+
+  auto ppitr = proposal_t.require_find(pitr->parent, "proposal parent not found");
+
+  proposal_t.modify(ppitr, contract_name, [&](auto & item){
+    item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+  });
+  
+}
+

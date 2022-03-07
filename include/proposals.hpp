@@ -21,6 +21,8 @@ CONTRACT proposals : public eosio::contract {
     
     DEFINE_PROPOSALS_TABLE
 
+    DEFINE_PROPOSALS_TABLE_MULTI_INDEX
+
     DEFINE_REFERENDUMS_TABLE
 
     TABLE phases_config_table {
