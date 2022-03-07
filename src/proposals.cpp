@@ -4,6 +4,7 @@
 
 #include "proposals/base_proposal.cpp"
 #include "proposals/main_proposal.cpp"
+#include "proposals/amendment_proposal.cpp"
 
 #include "phases/base_phase.cpp"
 #include "phases/dialog_phase.cpp"

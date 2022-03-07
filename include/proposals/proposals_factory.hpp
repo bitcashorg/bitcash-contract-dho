@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_proposal.hpp"
+#include "amendment_proposal.hpp"
 #include "../common/constants.hpp"
 
 class ProposalsFactory {
@@ -12,6 +13,9 @@ class ProposalsFactory {
       {
         case common::proposals::type_main.value:
           return new MainProposal(_contract);
+
+        case common::proposals::type_amendment.value:
+          return new AmendmentProposal(_contract);
 
         default:
           break;

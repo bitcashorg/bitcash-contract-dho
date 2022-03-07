@@ -20,5 +20,23 @@
       "durationDays": 3,
       "type": "voting"
     }
+  ],
+
+  "amendment": [
+    {
+      "phaseName": "discussion",
+      "durationDays": -1,
+      "type": "draft"
+    },
+    {
+      "phaseName": "debate",
+      "durationDays": 10,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "propvoting",
+      "durationDays": 3,
+      "type": "voting"
+    }
   ]
 }

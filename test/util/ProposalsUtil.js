@@ -3,6 +3,7 @@ const { TokenUtil } = require('./TokenUtil')
 
 const ProposalConstants = {
   TypeMain: 'main'
+  TypeAmendment: 'amendment',
 }
 
 class Proposal {

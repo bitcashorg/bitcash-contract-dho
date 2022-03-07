@@ -1,5 +1,9 @@
 {
   "main": {
     "minstake": ["asset", "100.0000 BANK"]
+  },
+
+  "amendment": {
+    "minstake": ["asset", "10.0000 BANK"]
   }
 }
