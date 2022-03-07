@@ -94,7 +94,7 @@ async function addActorPermission (target, targetRole, actor, actorRole) {
     }
 
     await updateAuth(permissions, { authorization: `${target}@owner` })
-    console.log(`permission created on ${target}@${targetRole} for ${actor}@${actorRole}`)
+    // console.log(`permission created on ${target}@${targetRole} for ${actor}@${actorRole}`)
   } catch (err) {
     console.error(`failed permission update on ${target} for ${actor}\n* error: ` + err + `\n`)
   }
@@ -184,4 +184,29 @@ async function updatePermissions () {
   }
 }
 
-module.exports = { updatePermissions }
+async function updatePermissionsSilent () {
+  for (const permission of permissionsConfig) {
+    if (isActorPermission(permission)) {
+      
+      const { target, actor } = permission
+      const [targetAccount, targetRole] = target.split('@')
+      const [actorAccount, actorRole] = actor.split('@')
+      await addActorPermission(targetAccount, targetRole, actorAccount, actorRole)
+
+    } else if (isKeyPermission(permission)) {
+
+      const { target, parent, key } = permission
+      const [ targetAccount, targetRole ] = target.split('@')
+      await createKeyPermission(targetAccount, targetRole, parent, key)
+
+    } else if (isActionPermission(permission)) {
+
+      const { target, action } = permission
+      const [ targetAccount, targetRole ] = target.split('@')
+      await allowAction(targetAccount, targetRole, action)
+    
+    }
+  }
+}
+
+module.exports = { updatePermissions, updatePermissionsSilent }

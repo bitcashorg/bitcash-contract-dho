@@ -8,14 +8,28 @@ The bitcash.dho smart contract.
 * eosio.cdt 1.6^
 * cmake 3.5^
 
-# Compiling
+## setup project 
 
-```
-./build.sh -e /root/eosio/2.0 -c /usr/opt/eosio.cdt
+create a .env file based on .env.example
+
+## compile all contracts
+```bash
+node scripts/commands.js compile
 ```
 
-# Deploying
+## compile a contract
 
+```bash
+node scripts/commands.js compile $CONTRACT_NAME
 ```
-cleos set contract <your_account> ./build/Release/bitcash.dho bitcash.dho.wasm bitcash.dho.abi
+### example:
+
+```bash
+node scripts/commands.js compile proposals111
+```
+
+## test
+
+```bash
+node scripts/commands.js compile test
 ```
