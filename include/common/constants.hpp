@@ -37,6 +37,7 @@ namespace common
     constexpr eosio::name type_main = "main"_n;
     constexpr eosio::name type_amendment = "amendment"_n;
     constexpr eosio::name type_extend_debate = "extenddebate"_n;
+    constexpr eosio::name type_shorten_debate = "shortndebate"_n;
 
     constexpr eosio::name status_open = "open"_n;
     constexpr eosio::name status_accepted = "accepted"_n;

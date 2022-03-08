@@ -9,5 +9,10 @@
 
   "extenddebate": {
     "minstake": ["asset", "10.0000 BANK"]
+  },
+
+  "shortndebate": {
+    "minstake": ["asset", "10.0000 BANK"]
   }
+
 }

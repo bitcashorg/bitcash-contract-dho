@@ -2,10 +2,10 @@ const { createRandomAccount, formatTimePoint, Asset } = require('../../scripts/e
 const { TokenUtil } = require('./TokenUtil')
 
 const ProposalConstants = {
-  TypeMain: 'main'
   TypeMain: 'main',
   TypeAmendment: 'amendment',
   TypeExtendDebate: 'extenddebate',
+  TypeShortenDebate: 'shortndebate'
 }
 
 class Proposal {
@@ -160,6 +160,129 @@ class ProposalsFactory {
       creator,
       budget: { key: 'budget', value: ['asset', budget] },
       parent: 0,
+      phases
+    })
+  }
+
+
+  static async createAmendmentWithDefaults ({
+    proposalId,
+    creator,
+    title,
+    description,
+    kpi,
+    deadline,
+    budget,
+    phases,
+    parent
+  }) {
+    if (!creator) {
+      creator = await createRandomAccount() 
+    }
+
+    if (!budget) {
+      budget = new Asset(1000000, TokenUtil.tokenCode, TokenUtil.tokenPrecision)
+      budget = budget.toString()
+    }
+
+    if (!parent) {
+      parent = 1
+    }
+
+    return ProposalsFactory.createEntry({
+      ...this._getProposalDefaults({
+        title,
+        description,
+        kpi,
+        deadline
+      }),
+      proposalId,
+      type: ProposalConstants.TypeAmendment,
+      creator,
+      budget: { key: 'budget', value: ['asset', budget] },
+      parent,
+      phases
+    })
+  }
+
+  static async createExtendDebateWithDefaults ({
+    proposalId,
+    creator,
+    title,
+    description,
+    kpi,
+    deadline,
+    close_date,
+    phases,
+    parent
+  }) {
+    if (!creator) {
+      creator = await createRandomAccount() 
+    }
+
+    if (!close_date) {
+      const date = new Date()
+      date.setDate(date.getDate() + 10)
+      close_date = formatTimePoint(date)
+    }
+
+    if (!parent) {
+      parent = 1
+    }
+
+    return ProposalsFactory.createEntry({
+      ...this._getProposalDefaults({
+        title,
+        description,
+        kpi,
+        deadline
+      }),
+      proposalId,
+      type: ProposalConstants.TypeExtendDebate,
+      creator,
+      close_date: { key: 'close_date', value: ['time_point', close_date] },
+      parent,
+      phases
+    })
+  }
+
+  static async createShortenDebateWithDefaults ({
+    proposalId,
+    creator,
+    title,
+    description,
+    kpi,
+    deadline,
+    close_date,
+    phases,
+    parent
+  }) {
+    if (!creator) {
+      creator = await createRandomAccount() 
+    }
+
+    if (!close_date) {
+      const date = new Date()
+      date.setDate(date.getDate() + 10)
+      close_date = formatTimePoint(date)
+    }
+
+    if (!parent) {
+      parent = 1
+    }
+
+    return ProposalsFactory.createEntry({
+      ...this._getProposalDefaults({
+        title,
+        description,
+        kpi,
+        deadline
+      }),
+      proposalId,
+      type: ProposalConstants.TypeShortenDebate,
+      creator,
+      close_date: { key: 'close_date', value: ['time_point', close_date] },
+      parent,
       phases
     })
   }

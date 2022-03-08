@@ -3,6 +3,8 @@
 #include "main_proposal.hpp"
 #include "amendment_proposal.hpp"
 #include "extend_debate_proposal.hpp"
+#include "shorten_debate_proposal.hpp"
+
 #include "../common/constants.hpp"
 
 class ProposalsFactory {
@@ -20,6 +22,10 @@ class ProposalsFactory {
 
         case common::proposals::type_extend_debate.value:
           return new ExtendDebateProposal(_contract);
+
+        case common::proposals::type_shorten_debate.value:
+          return new ShortenDebateProposal(_contract);
+
         default:
           break;
       }
