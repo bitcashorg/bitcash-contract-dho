@@ -1,0 +1,78 @@
+{
+  "main": [
+    {
+      "phaseName": "discussion",
+      "durationDays": -1,
+      "type": "draft"
+    },
+    {
+      "phaseName": "debate",
+      "durationDays": 10,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "debatevoting",
+      "durationDays": 3,
+      "type": "voting"
+    },
+    {
+      "phaseName": "propvoting",
+      "durationDays": 3,
+      "type": "voting"
+    }
+  ],
+
+  "amendment": [
+    {
+      "phaseName": "discussion",
+      "durationDays": -1,
+      "type": "draft"
+    },
+    {
+      "phaseName": "debate",
+      "durationDays": 10,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "propvoting",
+      "durationDays": 3,
+      "type": "voting"
+    }
+  ],
+
+  "extenddebate": [
+    {
+      "phaseName": "discussion",
+      "durationDays": -1,
+      "type": "draft"
+    },
+    {
+      "phaseName": "debate",
+      "durationDays": 10,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "propvoting",
+      "durationDays": 3,
+      "type": "voting"
+    }
+  ],
+
+  "shortndebate": [
+    {
+      "phaseName": "discussion",
+      "durationDays": -1,
+      "type": "draft"
+    },
+    {
+      "phaseName": "debate",
+      "durationDays": 10,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "propvoting",
+      "durationDays": 3,
+      "type": "voting"
+    }
+  ]
+}

@@ -34,6 +34,7 @@ class Phase {
     void save_phase_end();
     void change_proposal_status(const eosio::name & status);
     void update_parent();
+    void remove_awaiting_from_parent();
 
 
 };

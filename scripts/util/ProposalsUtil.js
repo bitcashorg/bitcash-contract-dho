@@ -1,4 +1,4 @@
-const { createRandomAccount, formatTimePoint, Asset } = require('../../scripts/eosio-util')
+const { createRandomAccount, formatTimePoint, Asset } = require('../eosio-util')
 const { TokenUtil } = require('./TokenUtil')
 
 const ProposalConstants = {

@@ -17,12 +17,18 @@ const getChainInfo = () => {
       }
     case 'telosTestnet':
       return {
-        keyProvider: []
+        keyProvider: [process.env.TLOS_PRIVATE_KEY],
+        httpEndpoint: 'https://testnet.telos.caleos.io'
       }
     case 'telosMainnet':
       return {
         keyProvider: []
       }
+      case 'jungleTestnet':
+        return {
+          keyProvider: [process.env.JUNGLE_PRIVATE_KEY],
+          httpEndpoint: 'https://jungle3.cryptolions.io/'
+        }
     default:
       return null
   }

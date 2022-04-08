@@ -81,6 +81,7 @@ void VotingPhase::end_impl ()
   else if (ritr->status == common::referendums::status_rejected)
   {
     change_proposal_status(common::proposals::status_rejected);
+    if (pitr->type != common::proposals::type_main ) { remove_awaiting_from_parent(); }
   }
   else
   {

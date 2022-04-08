@@ -315,7 +315,7 @@ describe('Tests for main proposals', async function () {
         table: 'proposals',
         json: true
       })
-      console.log(JSON.stringify(proposalsTable, null, 4))
+      console.table(JSON.stringify(proposalsTable, null, 4))
 
       const referendumsTable = await rpc.get_table_rows({
         code: referendums,

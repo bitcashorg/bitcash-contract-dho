@@ -18,7 +18,7 @@ void ShortenDebateProposal::create_impl (std::map<std::string, common::types::va
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
   proposals_t.modify(pitr, contract_name, [&](auto & item){
-    item.special_attributes.insert(std::make_pair("close_date", util::get_attr<eosio::time_point>(args, "close_date")));
+    item.special_attributes.insert(std::make_pair("days", util::get_attr<int64_t>(args, "days")));
   });
 
 }
@@ -39,7 +39,7 @@ void ShortenDebateProposal::update_impl (std::map<std::string, common::types::va
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
   proposals_t.modify(pitr, contract_name, [&](auto & item){
-    item.special_attributes.at("close_date") = util::get_attr<eosio::time_point>(args, "close_date", pitr->special_attributes.at("close_date"));
+    item.special_attributes.at("days") = util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days"));
   });
 
 }

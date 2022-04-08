@@ -6,27 +6,50 @@ const contract = (name, nameOnChain) => {
     nameOnChain,
     type: 'contract',
     stakes: {
-      cpu: '20.0000 TLOS',
-      net: '20.0000 TLOS',
-      ram: 1000000
+      cpu: '20.0000 EOS',
+      net: '20.0000 EOS',
+      ram: 2000000
     }
   }
 }
 
 const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
+const devKeyJungle = 'EOS8UQqzawtRUwtozSTPYLoyWv1ms1RKVrqVQikfQi5C77HFnFB51'
+const devKeyTLOS = 'EOS52qknGJh69NqfFL2sZfiuNtSYrR41B38w18gX1rbaoPFdGrpin'
+const mainnetKey = process.env.MAINNET_PUBLIC_KEY
+
 
 const supportedChains = {
-  local: 'local'
+  local: 'local',
+  telosTestnet: 'telosTestnet',
+  telosMainnet: 'telosMainnet',
+  jungleTestnet:'jungleTestnet',
+  eosMainnet: 'eosMainnet'
 }
 
 const ownerByChain = {
-  [supportedChains.local]: 'eosio'
+  [supportedChains.local]: 'eosio',
+  [supportedChains.jungleTestnet]: 'tlalocman123',
+  [supportedChains.telosTestnet]: 'tlaclocmant2',
+  [supportedChains.eosMainnet]: 'erick.bk'
 }
 
 const ownerPublicKeysByChain = {
   [supportedChains.local]: {
     owner: devKey,
     active: devKey
+  },
+  [supportedChains.jungleTestnet]: {
+    owner: devKeyJungle,
+    active: devKeyJungle
+  },
+  [supportedChains.telosTestnet]: {
+    owner: devKeyTLOS,
+    active: devKeyTLOS
+  },
+  [supportedChains.eosMainnet]: {
+    owner: mainnetKey,
+    active: mainnetKey
   }
 }
 
@@ -34,15 +57,37 @@ const publicKeysByChain = {
   [supportedChains.local]: {
     owner: devKey,
     active: devKey
+  },
+  [supportedChains.jungleTestnet]: {
+    owner: devKeyJungle,
+    active: devKeyJungle
+  },
+  [supportedChains.telosTestnet]: {
+    owner: devKeyTLOS,
+    active: devKeyTLOS
   }
 }
 
 const contractsConfig = {
   [supportedChains.local]: [
     contract('nullcontract', 'm1nullcntrct'),
-    contract('referendums', 'referendums1'),
-    contract('proposals', 'proposals111'),
+    contract('referendums', 'bitcash.refm'),
+    contract('proposals', 'bitcash.prop'),
     contract('token', 'eosio.token')
+  ],
+  [supportedChains.jungleTestnet]: [
+    contract('referendums', 'referendums1'),
+    contract('proposals', 'tlaproposals'),
+    contract('token', 'tlatesttoken')
+  ],
+  [supportedChains.telosTestnet]: [
+    contract('referendums', 'referendums1'),
+    contract('proposals', 'tlaproposals'),
+    contract('token', 'tlatesttoken')
+  ],
+  [supportedChains.telosTestnet]: [
+    contract('referendums', 'testrefendum'),
+    contract('proposals', 'testproposal'),
   ]
 }
 

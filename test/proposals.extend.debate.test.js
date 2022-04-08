@@ -177,7 +177,7 @@ describe('Tests for extend debate proposals', async function () {
       table: 'proposals',
       json: true
     })
-    console.log(JSON.stringify(proposalsTable, null, 4))
+    console.table(JSON.stringify(proposalsTable, null, 4))
 
   
 

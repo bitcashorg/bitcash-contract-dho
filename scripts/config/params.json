@@ -1,0 +1,18 @@
+{
+  "main": {
+    "minstake": ["asset", "10.0000 MOCKEOS"]
+  },
+
+  "amendment": {
+    "minstake": ["asset", "1.0000 MOCKEOS"]
+  },
+
+  "extenddebate": {
+    "minstake": ["asset", "1.0000 MOCKEOS"]
+  },
+
+  "shortndebate": {
+    "minstake": ["asset", "1.0000 MOCKEOS"]
+  }
+
+}

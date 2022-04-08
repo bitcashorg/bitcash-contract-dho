@@ -267,6 +267,7 @@ describe('Tests for referendums', async function () {
 
     await TokenUtil.issue({ amount: (new Asset(20000, TokenUtil.tokenCode, TokenUtil.tokenPrecision)).toString(), issuer: token, contract: contracts.token })
 
+    await sleep(2000)
 
     // Act
     await contracts.referendums.finish(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })
@@ -337,6 +338,7 @@ describe('Tests for referendums', async function () {
         if (votingOrder[i] !== 'novote')
           await contracts.referendums.vote(referendum.params.referendumId, voter, votingOrder[i], { authorization: `${voter}@active` })
       }
+      await sleep(2000)
 
       // Act
       await contracts.referendums.finish(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })

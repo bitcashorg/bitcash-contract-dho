@@ -79,9 +79,57 @@ void Phase::update_parent()
 
   auto ppitr = proposal_t.require_find(pitr->parent, "proposal parent not found");
 
+  
+
+  if ( pitr->type == common::proposals::type_amendment ) {
+    
+    proposal_t.modify(ppitr, contract_name, [&](auto & item){
+      item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+      item.special_attributes.at("budget") = pitr->special_attributes.at("budget");
+    });
+
+
+  } 
+
+  if ( pitr->type == common::proposals::type_extend_debate ) {
+
+    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
+    
+    proposal_t.modify(ppitr, contract_name, [&](auto & item){
+      item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+      item.phases[position].duration_days += days;
+    });
+
+
+  } 
+
+  if ( pitr->type == common::proposals::type_shorten_debate ) {
+    
+    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
+
+    proposal_t.modify(ppitr, contract_name, [&](auto & item){
+      item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+      item.phases[position].duration_days -= days;
+    });
+
+
+  } 
+  
+}
+
+void Phase::remove_awaiting_from_parent()
+{
+  proposals::proposal_tables proposal_t(contract_name, contract_name.value);
+  auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
+
+  check(pitr->type != common::proposals::type_main, "Main proposals don't have parents!");
+
+  auto ppitr = proposal_t.require_find(pitr->parent, "proposal parent not found");
+
   proposal_t.modify(ppitr, contract_name, [&](auto & item){
     item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
   });
   
 }
+
 

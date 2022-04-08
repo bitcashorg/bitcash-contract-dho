@@ -57,8 +57,4 @@ void AmendmentProposal::cancel_impl (std::map<std::string, common::types::varian
     item.status = common::proposals::status_rejected;
   });
 
-  proposals_t.modify(ppitr, contract_name, [&](auto & item){
-    item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
-  });
-
 }

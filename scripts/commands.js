@@ -3,6 +3,7 @@ const { compileContract } = require('./compile')
 const { createAccount, deployContract } = require('./deploy')
 const { accountExists, contractRunningSameCode } = require('./eosio-errors')
 const { updatePermissions } = require('./permissions')
+const { setConfig, setPhases } = require('./contract-settings')
 const prompt = require('prompt-sync')()
 
 
@@ -56,7 +57,9 @@ async function init () {
   console.log('update permissions finished\n\n')
 
   console.log('SETTING CONTRACTS PARAMETERS\n')
-  await setParamsValue()
+  await setConfig()
+  await setPhases()
+
   console.log('setting parameters finished\n\n')
 
 }

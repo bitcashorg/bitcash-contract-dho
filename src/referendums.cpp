@@ -175,7 +175,7 @@ ACTION referendums::vote (const uint64_t & referendum_id, const eosio::name & vo
   eosio::check(balance_itr != token_accts_t.end(), "voter does not have " + common::token_symbol.code().to_string());
   eosio::check(balance_itr->balance.amount > 0, "token balance must be greater than zero");
 
-  eosio::asset vote_amount = balance_itr->balance;
+  eosio::asset vote_amount = balance_itr->balance; 
 
   votes_t.emplace(_self, [&](auto & item){
     item.voter = voter;
