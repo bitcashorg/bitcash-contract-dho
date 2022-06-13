@@ -1,7 +1,7 @@
 const { transact, rpc } = require('./eos')
 const { permissionsConfig } = require('./config')
 
-async function updateAuth ({ account, permission, parent, auth }, { authorization }) {
+async function updateAuth({ account, permission, parent, auth }, { authorization }) {
   let [actor, perm] = authorization.split('@')
 
   if ((parent == 'owner' && permission == 'owner') || parent == '') {
@@ -14,27 +14,46 @@ async function updateAuth ({ account, permission, parent, auth }, { authorizatio
     }
     return 1
   })
-
+  let tran = {
+    actions: [
+      {
+        account: 'eosio',
+        name: 'updateauth',
+        authorization: [{
+          actor,
+          permission: perm,
+        }],
+        data: {
+          account,
+          permission,
+          parent,
+          auth
+        },
+      }]
+  }
+  console.log("🚀 ~ file: permissions.js ~ line 34 ~ updateAuth ~ tran", tran)
+  
+  
   return transact({
     actions: [
-    {
-      account: 'eosio',
-      name: 'updateauth',
-      authorization: [{
-        actor,
-        permission: perm,
-      }],
-      data: {
-        account,
-        permission,
-        parent,
-        auth
-      },
-    }]
+      {
+        account: 'eosio',
+        name: 'updateauth',
+        authorization: [{
+          actor,
+          permission: perm,
+        }],
+        data: {
+          account,
+          permission,
+          parent,
+          auth
+        },
+      }]
   })
 }
 
-async function linkauth ({ account, code, type, requirement }, { authorization }) {
+async function linkauth({ account, code, type, requirement }, { authorization }) {
 
   let [actor, permission] = authorization.split('@')
 
@@ -57,7 +76,7 @@ async function linkauth ({ account, code, type, requirement }, { authorization }
 
 }
 
-async function addActorPermission (target, targetRole, actor, actorRole) {
+async function addActorPermission(target, targetRole, actor, actorRole) {
   try {
     const { parent, required_auth: { threshold, waits, keys, accounts } } =
       (await rpc.get_account(target))
@@ -93,6 +112,8 @@ async function addActorPermission (target, targetRole, actor, actorRole) {
       }
     }
 
+    console.log(permissions)
+
     await updateAuth(permissions, { authorization: `${target}@owner` })
     // console.log(`permission created on ${target}@${targetRole} for ${actor}@${actorRole}`)
   } catch (err) {
@@ -100,7 +121,7 @@ async function addActorPermission (target, targetRole, actor, actorRole) {
   }
 }
 
-async function createKeyPermission (account, role, parentRole = 'active', key) {
+async function createKeyPermission(account, role, parentRole = 'active', key) {
   try {
     const { permissions } = await rpc.get_account(account)
 
@@ -109,11 +130,11 @@ async function createKeyPermission (account, role, parentRole = 'active', key) {
     if (perm) {
       const { parent, required_auth } = perm
       const { keys } = required_auth
-  
+
       if (keys.find(item => item.key === key)) {
-        console.log("- createKeyPermission key already exists "+key)
+        console.log("- createKeyPermission key already exists " + key)
         return;
-      }  
+      }
     }
 
     await updateAuth({
@@ -136,7 +157,7 @@ async function createKeyPermission (account, role, parentRole = 'active', key) {
   }
 }
 
-async function allowAction (account, role, action) {
+async function allowAction(account, role, action) {
   try {
     await linkauth({
       account,
@@ -159,10 +180,10 @@ const isActorPermission = permission => permission.actor && !permission.key
 const isKeyPermission = permission => permission.key && !permission.actor
 const isActionPermission = permission => permission.action
 
-async function updatePermissions () {
+async function updatePermissions() {
   for (const permission of permissionsConfig) {
     if (isActorPermission(permission)) {
-      
+
       const { target, actor } = permission
       const [targetAccount, targetRole] = target.split('@')
       const [actorAccount, actorRole] = actor.split('@')
@@ -171,23 +192,23 @@ async function updatePermissions () {
     } else if (isKeyPermission(permission)) {
 
       const { target, parent, key } = permission
-      const [ targetAccount, targetRole ] = target.split('@')
+      const [targetAccount, targetRole] = target.split('@')
       await createKeyPermission(targetAccount, targetRole, parent, key)
 
     } else if (isActionPermission(permission)) {
 
       const { target, action } = permission
-      const [ targetAccount, targetRole ] = target.split('@')
+      const [targetAccount, targetRole] = target.split('@')
       await allowAction(targetAccount, targetRole, action)
-    
+
     }
   }
 }
 
-async function updatePermissionsSilent () {
+async function updatePermissionsSilent() {
   for (const permission of permissionsConfig) {
     if (isActorPermission(permission)) {
-      
+
       const { target, actor } = permission
       const [targetAccount, targetRole] = target.split('@')
       const [actorAccount, actorRole] = actor.split('@')
@@ -196,15 +217,15 @@ async function updatePermissionsSilent () {
     } else if (isKeyPermission(permission)) {
 
       const { target, parent, key } = permission
-      const [ targetAccount, targetRole ] = target.split('@')
+      const [targetAccount, targetRole] = target.split('@')
       await createKeyPermission(targetAccount, targetRole, parent, key)
 
     } else if (isActionPermission(permission)) {
 
       const { target, action } = permission
-      const [ targetAccount, targetRole ] = target.split('@')
+      const [targetAccount, targetRole] = target.split('@')
       await allowAction(targetAccount, targetRole, action)
-    
+
     }
   }
 }
