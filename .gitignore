@@ -2,6 +2,8 @@
 node_modules/
 package-lock.json
 
+coverage
+
 # Byte-compiled smarpy files
 compiled/
 build/
