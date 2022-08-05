@@ -2,7 +2,7 @@ const { assertError } = require('../eosio-errors')
 
 class TokenUtil {
 
-  static tokenCode = 'MOCKEOS'
+  static tokenCode = 'BANK'
   static tokenPrecision = 4
 
   static async create ({ issuer, maxSupply, contractAccount, contract }) {

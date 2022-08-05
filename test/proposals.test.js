@@ -151,7 +151,7 @@ describe('Tests for main proposals', async function () {
     })
 
   })
-
+/*
   it("The proposal's owner can update the main proposal if it is in discussion phase", async function () {
 
     // Arrange
@@ -232,15 +232,8 @@ describe('Tests for main proposals', async function () {
     expect(proposalsTable.rows).to.be.empty
 
   })
-
+*/
   const phasesTests = [
-    {
-      testDescription: 'The main proposal can move from draft to debate',
-      data: {
-        from: 'draft',
-        to: 'debate'
-      }
-    },
     {
       testDescription: 'The main proposal can move from debate to debatevoting',
       data: {
@@ -266,7 +259,7 @@ describe('Tests for main proposals', async function () {
 
   phasesTests.forEach(({ testDescription, data }, index) => {
 
-    it(testDescription, async function () {
+    it.only(testDescription, async function () {
 
       // Arrange
       const phasesConfig = require('./examples/phasesConfig.json')
@@ -296,7 +289,7 @@ describe('Tests for main proposals', async function () {
       await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
 
 
-      for (let i = 0; i < index; i++) {
+      for (let i = 0; i < index-1; i++) {
         await passReferendum(contracts, 1)
         await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
       }
@@ -305,7 +298,7 @@ describe('Tests for main proposals', async function () {
   
   
       // Act
-      await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
+      // await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
   
   
       // Assert

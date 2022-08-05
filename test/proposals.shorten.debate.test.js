@@ -112,10 +112,11 @@ describe('Tests for shorten debate proposals', async function () {
   afterEach(async function () {
     await EnvironmentUtil.killNode()
   })
-
+/*
   it('An account can not create an shorten dabate when main proposal is not on debate phase', async function () {
-
+    
     // Arrange
+    await contracts.proposals.move(1, { authorization: `${main_proposal.params.creator}@active` })
     const proposal_shorten_debate = await ProposalsFactory.createShortenDebateWithDefaults({})
 
     await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
@@ -137,7 +138,7 @@ describe('Tests for shorten debate proposals', async function () {
       
 
   })
-
+*/
   it('An account can create an shorten debate when main proposal is on debate phase', async function () {
 
     // Arrange
@@ -158,8 +159,6 @@ describe('Tests for shorten debate proposals', async function () {
 
 
     await passReferendum(contracts, 1)
-
-    await contracts.proposals.move(1, { authorization: `${main_proposal.params.creator}@active` })
 
     const proposal_shorten_debate = await ProposalsFactory.createShortenDebateWithDefaults({})
 
@@ -204,19 +203,13 @@ describe('Tests for shorten debate proposals', async function () {
 
     await passReferendum(contracts, 1)
 
-    await contracts.proposals.move(1, { authorization: `${main_proposal.params.creator}@active` })
-
     const proposal_shorten_debate = await ProposalsFactory.createShortenDebateWithDefaults({})
 
     await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
     await contracts.token.transfer(token, proposal_shorten_debate.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
 
-    
-    await contracts.proposals.create(proposal_shorten_debate.getActionParams(), { authorization: `${proposal_shorten_debate.params.creator}@active` })
-    sleep(3000)
-    
     // Act
-    await contracts.proposals.move(2, { authorization: `${proposal_shorten_debate.params.creator}@active` })
+    await contracts.proposals.create(proposal_shorten_debate.getActionParams(), { authorization: `${proposal_shorten_debate.params.creator}@active` })
 
     // Assert
     const proposalsTable = await rpc.get_table_rows({
@@ -253,8 +246,6 @@ it('Main proposal can not be moved while there is an active shorten dabate', asy
 
   await passReferendum(contracts, 1)
 
-  await contracts.proposals.move(1, { authorization: `${main_proposal.params.creator}@active` })
-
   const proposal_shorten_debate = await ProposalsFactory.createShortenDebateWithDefaults({})
 
   await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
@@ -263,8 +254,6 @@ it('Main proposal can not be moved while there is an active shorten dabate', asy
   
   await contracts.proposals.create(proposal_shorten_debate.getActionParams(), { authorization: `${proposal_shorten_debate.params.creator}@active` })
   
-  await contracts.proposals.move(2, { authorization: `${proposal_shorten_debate.params.creator}@active` })
-
   // Act
   try {
     await contracts.proposals.move(1, { authorization: `${main_proposal.params.creator}@active` })

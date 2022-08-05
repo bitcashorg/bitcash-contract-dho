@@ -4,12 +4,13 @@
 
 namespace common
 {
-  const eosio::symbol token_symbol = eosio::symbol("MOCKEOS", 4);
+  const eosio::symbol token_symbol = eosio::symbol("BANK", 4);
   const int64_t microseconds_per_day = 86400000000;
 
   namespace contracts
   {
-    constexpr eosio::name bank_token = "mockeostoken"_n;
+    // constexpr eosio::name bank_token = "mockeostoken"_n;
+    const eosio::name bank_token = "eosio.token"_n;
     constexpr eosio::name proposals = "testproposal"_n;
     constexpr eosio::name referendums = "testrefendum"_n;
   }
