@@ -62,6 +62,24 @@ N / A
 | -- | -- | -- |
 | [`std::map<std::string, common::types::variant_value>`](#reference2)  | args | Basic information of the proposal |
 
+example:
+
+```javascript
+[
+  { key: 'type', value: [ 'name', 'main' ] },
+  { key: 'creator', value: [ 'name', 'qhxkbwqodobq' ] },
+  { key: 'title', value: [ 'string', 'default title' ] },
+  { key: 'description', value: [ 'string', 'default description' ] },
+  { key: 'kpi', value: [ 'string', 'default kpis' ] },
+  {
+    key: 'deadline',
+    value: [ 'time_point', '2023-02-20T18:21:25.880' ]
+  },
+  { key: 'parent', value: [ 'int64', 0 ] },
+  { key: 'budget', value: [ 'asset', '100.0000 BANK' ] }
+]
+```
+
 </br>
 
 ### **variant_value**
