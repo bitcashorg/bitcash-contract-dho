@@ -67,11 +67,7 @@ void Proposal::update(std::map<std::string, common::types::variant_value> &args)
       util::to_str("can not modify proposal, it is not in ", common::proposals::phase_discussion, " phase"));
 
   proposals_t.modify(pitr, contract_name, [&](auto &item)
-                     {
-    item.title = util::get_attr<std::string>(args, "title", pitr->title);
-    item.description = util::get_attr<std::string>(args, "description", pitr->description);
-    item.kpi = util::get_attr<std::string>(args, "kpi", pitr->kpi);
-    item.deadline = util::get_attr<eosio::time_point>(args, "deadline", pitr->deadline); });
+                     { item.deadline = util::get_attr<eosio::time_point>(args, "deadline", pitr->deadline); });
 
   update_impl(args);
 }
