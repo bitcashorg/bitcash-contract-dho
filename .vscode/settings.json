@@ -2,5 +2,7 @@
   "cSpell.words": [
     "EOSIO",
     "eosio"
-  ]
+  ],
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true
 }
