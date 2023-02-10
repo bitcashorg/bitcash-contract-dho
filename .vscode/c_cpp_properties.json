@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/usr/opt/eosio.cdt/1.8.0/include/eosiolib/contracts/**",
+                "/usr/opt/eosio.cdt/1.8.0/include/eosiolib/core/**",
+                "/usr/opt/eosio.cdt/1.8.0/include/**",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64",
+            "forcedInclude": [
+               
+            ]
+        }
+    ],
+    "version": 4
+}
