@@ -1,8 +1,8 @@
 const { createRandomAccount } = require('../../scripts/eosio-util')
 
 const ReferendumConstants = {
-  VoteFavour: 'favour',
-  VoteAgainst: 'against',
+  VoteFavour: 'yes',
+  VoteAgainst: 'no',
   VoteAbstain: 'abstain'
 }
 

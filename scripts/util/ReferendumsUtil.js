@@ -1,8 +1,8 @@
 const { createRandomAccount } = require('../eosio-util')
 
 const ReferendumConstants = {
-  VoteFavour: 'favour',
-  VoteAgainst: 'against',
+  VoteFavour: 'yes',
+  VoteAgainst: 'no',
   VoteAbstain: 'abstain'
 }
 
@@ -122,7 +122,7 @@ class ReferendumsFactory {
       created: 'created',
       started: 'started',
       hold: 'hold',
-      accepted: 'accepted',
+      accepted: 'approved',
       rejected: 'rejected'
     }
   }

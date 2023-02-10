@@ -108,8 +108,8 @@ describe('Tests for referendums', async function () {
       status: ReferendumsFactory.Status().created,
       vote_tally: [
         { key: 'abstain', value: '0.0000 BANK' },
-        { key: 'against', value: '0.0000 BANK' },
-        { key: 'favour', value: '0.0000 BANK' }
+        { key: 'no', value: '0.0000 BANK' },
+        { key: 'yes', value: '0.0000 BANK' }
       ]
     }])
 

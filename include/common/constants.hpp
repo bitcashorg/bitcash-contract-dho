@@ -28,8 +28,8 @@ namespace common
     constexpr eosio::name status_accepted = "accepted"_n;
     constexpr eosio::name status_rejected = "rejected"_n;
 
-    constexpr eosio::name vote_favour = "favour"_n;
-    constexpr eosio::name vote_against = "against"_n;
+    constexpr eosio::name vote_favour = "yes"_n;
+    constexpr eosio::name vote_against = "no"_n;
     constexpr eosio::name vote_abstain = "abstain"_n;
   }
 
@@ -41,14 +41,14 @@ namespace common
     constexpr eosio::name type_shorten_debate = "shortndebate"_n;
 
     constexpr eosio::name status_open = "open"_n;
-    constexpr eosio::name status_accepted = "accepted"_n;
+    constexpr eosio::name status_accepted = "approved"_n;
     constexpr eosio::name status_rejected = "rejected"_n;
 
     constexpr eosio::name phase_discussion = "discussion"_n;
     constexpr eosio::name phase_debate = "debate"_n;
-    constexpr eosio::name phase_debate_voting = "debatevoting"_n;
+    constexpr eosio::name phase_debate_voting = "prevote"_n;
     constexpr eosio::name phase_voting = "voting"_n;
-    constexpr eosio::name phase_accepted = "accepted"_n;
+    constexpr eosio::name phase_accepted = "approved"_n;
     constexpr eosio::name phase_rejected = "rejected"_n;
 
     namespace phases

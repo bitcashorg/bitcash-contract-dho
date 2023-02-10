@@ -235,23 +235,23 @@ describe('Tests for main proposals', async function () {
 */
   const phasesTests = [
     {
-      testDescription: 'The main proposal can move from debate to debatevoting',
+      testDescription: 'The main proposal can move from debate to prevote',
       data: {
         from: 'debate',
-        to: 'debatevoting'
+        to: 'prevote'
       }
     },
     {
-      testDescription: 'The main proposal can move from debatevoting to propvoting',
+      testDescription: 'The main proposal can move from prevote to vote',
       data: {
-        from: 'debatevoting',
-        to: 'propvoting'
+        from: 'prevote',
+        to: 'vote'
       }
     },
     {
-      testDescription: 'The main proposal can finish propvoting and change status to accepted',
+      testDescription: 'The main proposal can finish vote and change status to accepted',
       data: {
-        from: 'propvoting',
+        from: 'vote',
         to: ''
       }
     }
@@ -259,7 +259,7 @@ describe('Tests for main proposals', async function () {
 
   phasesTests.forEach(({ testDescription, data }, index) => {
 
-    it.only(testDescription, async function () {
+    it(testDescription, async function () {
 
       // Arrange
       const phasesConfig = require('./examples/phasesConfig.json')

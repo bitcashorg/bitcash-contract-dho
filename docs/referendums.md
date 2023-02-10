@@ -15,8 +15,8 @@ This contract contains the necessary actions  to create a referendum.
 
 | Vote | Description |
 | -- | -- |
-| favour | The vote is in favor |
-| against | The vote is against |
+| yes | The vote is in favor |
+| no | The vote is no |
 | abstain | The vote is abstain |
 <!-- 
 Please check out, I'm not sure is it 'in' or 'on'.
@@ -90,7 +90,7 @@ N / A
 ### Parameters:
 | Type | Name| Description | 
 | -- | -- | -- |
-|uint64_t | referenudm_id | Referendum id |
+|uint64_t | referendum_id | Referendum id |
 
 ---
 
@@ -113,7 +113,7 @@ N / A
 Ends the selected referendum. Depending on votes, referendum can be accepted or rejected.
 Referendum status: accepted / rejected 
 ### Require permission: `creator@active`
-### Requiere permision to finish before time: `self@active`
+### Require permission to finish before time: `self@active`
 ### Inline actions: 
 N / A
 ### Parameters:
@@ -137,9 +137,9 @@ N / A
 | name | option | User's Vote |
 
 Note: User's vote can be
-+ favour
++ yes
 + abstain
-+ against
++ no
 
 ---
 
@@ -201,7 +201,7 @@ Note: User's vote can be
 | -- | -- | -- |
 | name | voter | Voter's name |
 | asset | amount | Number of tokens a user has |
-| name | option | User's vote (favour, abstain, against) |
+| name | option | User's vote (yes, abstain, no) |
 | uint32_t | weight | User's vote weight |
 
 ---

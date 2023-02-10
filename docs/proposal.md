@@ -16,7 +16,7 @@ This contract contains the necessary actions to create a new proposal, modify it
 | Status | Description |
 | -- | -- |
 | open | It means that the proposal is open to debate or modifications. |
-| accepted | It means that the proposal has finished and has been accepted. |
+| approved | It means that the proposal has finished and has been approved. |
 | rejected | It means that the proposal has finished and has been rejected. |
 </br>
 
@@ -26,9 +26,9 @@ This contract contains the necessary actions to create a new proposal, modify it
 | -- | -- |
 | discussion | Proposal it can be modified. |
 | debate | Users can discuss the proposal. |
-| debatevoting | It is a voting phase to go to voting  |
+| prevote | It is a voting phase to go to voting  |
 | voting | Proposal is in voting phase. |
-| accpeted | Proposal has been accepted. |
+| accpeted | Proposal has been approved. |
 | rejected | Proposal has been rejected. |
 </br>
 
@@ -45,7 +45,7 @@ This contract contains the necessary actions to create a new proposal, modify it
 <!-- Doubt:
 Please, read carefully what i wrote above, I think maybe I missunderstand types and phases, 'cause as I undertand every phase can have its own type.
 I marked as `pending` some fields because I'm not sure how to describe them.
-Also, I haven't seen 'propvoting' in the constants.hpp file, only its use in the Unit Tests
+Also, I haven't seen 'vote' in the constants.hpp file, only its use in the Unit Tests
 -->
 
 ---
@@ -136,7 +136,7 @@ N / A
 ## **move** 
 ### Description: 
 Changes the phase of the proposal. 
-draft -> debate -> debatevoting -> propvoting
+draft -> debate -> prevote -> vote
 ### Required permission: `creator@active`
 ### Inline actions:
 Voting phase
