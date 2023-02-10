@@ -31,5 +31,5 @@ node scripts/commands.js compile proposals111
 ## test
 
 ```bash
-node scripts/commands.js compile test
+npm run test
 ```
