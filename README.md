@@ -1,18 +1,21 @@
+<!-- @format -->
+
 # bitcash.dho-smart-contract
 
 The bitcash.dho smart contract.
 
 # Dependencies
 
-* eosio 2.0^
-* eosio.cdt 1.6^
-* cmake 3.5^
+- eosio 2.0^
+- eosio.cdt 1.6^
+- cmake 3.5^
 
-## setup project 
+## setup project
 
 create a .env file based on .env.example
 
 ## compile all contracts
+
 ```bash
 node scripts/commands.js compile
 ```
@@ -22,6 +25,7 @@ node scripts/commands.js compile
 ```bash
 node scripts/commands.js compile $CONTRACT_NAME
 ```
+
 ### example:
 
 ```bash
