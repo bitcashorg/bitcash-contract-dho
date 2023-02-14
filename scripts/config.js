@@ -1,5 +1,7 @@
 require('dotenv').config()
 
+const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CVY'
+
 const contract = (name, nameOnChain) => {
   return {
     name,
@@ -13,59 +15,12 @@ const contract = (name, nameOnChain) => {
   }
 }
 
-const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
-const devKeyJungle = 'EOS8UQqzawtRUwtozSTPYLoyWv1ms1RKVrqVQikfQi5C77HFnFB51'
-const devKeyTLOS = 'EOS52qknGJh69NqfFL2sZfiuNtSYrR41B38w18gX1rbaoPFdGrpin'
-const mainnetKey = process.env.MAINNET_PUBLIC_KEY
-
-
 const supportedChains = {
   local: 'local',
   telosTestnet: 'telosTestnet',
   telosMainnet: 'telosMainnet',
-  jungleTestnet:'jungleTestnet',
+  jungleTestnet: 'jungleTestnet',
   eosMainnet: 'eosMainnet'
-}
-
-const ownerByChain = {
-  [supportedChains.local]: 'eosio',
-  [supportedChains.jungleTestnet]: 'tlalocman123',
-  [supportedChains.telosTestnet]: 'tlaclocmant2',
-  [supportedChains.eosMainnet]: 'erick.bk'
-}
-
-const ownerPublicKeysByChain = {
-  [supportedChains.local]: {
-    owner: devKey,
-    active: devKey
-  },
-  [supportedChains.jungleTestnet]: {
-    owner: devKeyJungle,
-    active: devKeyJungle
-  },
-  [supportedChains.telosTestnet]: {
-    owner: devKeyTLOS,
-    active: devKeyTLOS
-  },
-  [supportedChains.eosMainnet]: {
-    owner: mainnetKey,
-    active: mainnetKey
-  }
-}
-
-const publicKeysByChain = {
-  [supportedChains.local]: {
-    owner: devKey,
-    active: devKey
-  },
-  [supportedChains.jungleTestnet]: {
-    owner: devKeyJungle,
-    active: devKeyJungle
-  },
-  [supportedChains.telosTestnet]: {
-    owner: devKeyTLOS,
-    active: devKeyTLOS
-  }
 }
 
 const contractsConfig = {
@@ -91,12 +46,22 @@ const contractsConfig = {
   ]
 }
 
+const ownerByChain = {
+  [supportedChains.local]: 'eosio',
+  [supportedChains.jungleTestnet]: 'tlalocman123',
+  [supportedChains.telosTestnet]: 'tlaclocmant2',
+  [supportedChains.eosMainnet]: 'erick.bk'
+}
+
+const ownerPublicKeys = {
+  owner: process.env.PUBLIC_KEY,
+  active: process.env.PUBLIC_KEY
+}
+
 const chain = process.env.CHAIN_NAME
 
-const owner = ownerByChain[chain]
-const ownerPublicKeys = ownerPublicKeysByChain[chain]
-const publicKeys = publicKeysByChain[chain]
-
+const owner = ownerPublicKeys
+const publicKeys = ownerPublicKeys
 const contracts = contractsConfig[chain]
 const contractNames = {}
 const nameOnChainToName = {}
@@ -121,7 +86,7 @@ const permissionsConfig = [
   }
 ]
 
-function isLocalNode () {
+function isLocalNode() {
   return chain == supportedChains.local
 }
 
@@ -130,6 +95,6 @@ function sleep(ms) {
 }
 
 module.exports = {
-  contracts, contractNames, nameOnChainToName, owner, ownerPublicKeys, publicKeys, 
+  contracts, contractNames, nameOnChainToName, owner, ownerPublicKeys, publicKeys,
   isLocalNode, sleep, chain, permissionsConfig, devKey
 }
