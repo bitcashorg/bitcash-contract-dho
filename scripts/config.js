@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CVY'
+const devKey = 'EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV'
 
 const contract = (name, nameOnChain) => {
   return {
@@ -60,7 +60,7 @@ const ownerPublicKeys = {
 
 const chain = process.env.CHAIN_NAME
 
-const owner = ownerPublicKeys
+const owner = ownerByChain[chain]
 const publicKeys = ownerPublicKeys
 const contracts = contractsConfig[chain]
 const contractNames = {}

@@ -9,26 +9,26 @@ const { Api, JsonRpc } = eosjs
 
 const getChainInfo = () => {
   const chainName = process.env.CHAIN_NAME
-  switch(chainName) {
+  switch (chainName) {
     case 'local':
       return {
-        keyProvider: [process.env.LOCAL_PRIVATE_KEY],
+        keyProvider: [process.env.PRIVATE_KEY],
         httpEndpoint: 'http://127.0.0.1:8888'
       }
     case 'telosTestnet':
       return {
-        keyProvider: [process.env.TLOS_PRIVATE_KEY],
+        keyProvider: [process.env.PRIVATE_KEY],
         httpEndpoint: 'https://testnet.telos.caleos.io'
       }
     case 'telosMainnet':
       return {
         keyProvider: []
       }
-      case 'jungleTestnet':
-        return {
-          keyProvider: [process.env.JUNGLE_PRIVATE_KEY],
-          httpEndpoint: 'https://jungle3.cryptolions.io/'
-        }
+    case 'jungleTestnet':
+      return {
+        keyProvider: [process.env.PRIVATE_KEY],
+        httpEndpoint: 'https://jungle3.cryptolions.io/'
+      }
     default:
       return null
   }
@@ -41,7 +41,7 @@ const signatureProvider = new JsSignatureProvider(Array.isArray(keyProvider) ? k
 const rpc = new JsonRpc(httpEndpoint, { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
-async function transact (transaction, options={}) {
+async function transact(transaction, options = {}) {
   options = { blocksBehind: 3, expireSeconds: 30, expireSeconds: 2000, ...options }
   const res = await api.transact(
     transaction,
