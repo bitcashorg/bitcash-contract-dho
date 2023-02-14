@@ -1,30 +1,16 @@
-cleos -u https://eos.api.eosnation.io push action eosio updateauth '{
-    "account": "testrefendum",
+cleos -u https://eos.greymass.com push action eosio updateauth '{
+    "account": "testproposal",
     "permission": "active",
     "parent": "owner" ,
     "auth": {
-        "threshold": 1,
         "keys": [
             {
-                "key": "EOS73BQAiofDo4Eq57HyhrYmKxj8VXFSz5YSPcduQgctnXTDHzqtZ",
+                "key": "EOS8UQqzawtRUwtozSTPYLoyWv1ms1RKVrqVQikfQi5C77HFnFB51",
                 "weight": 1
             }
         ],
+        "threshold": 1,
         "accounts": [
-            {
-                "permission": {
-                    "actor": "testrefendum",
-                    "permission": "eosio.code"
-                },
-                "weight": 1
-            },
-            {
-                "permission": {
-                    "actor": "testproposal",
-                    "permission": "active"
-                },
-                "weight": 1
-            },
             {
                 "permission": {
                     "actor": "erick.bk",
@@ -35,4 +21,4 @@ cleos -u https://eos.api.eosnation.io push action eosio updateauth '{
         ],
         "waits": []
     }
-}' -p testrefendum@active
+}' -p testproposal@owner

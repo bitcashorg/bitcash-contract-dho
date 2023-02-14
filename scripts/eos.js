@@ -29,6 +29,11 @@ const getChainInfo = () => {
         keyProvider: [process.env.PRIVATE_KEY],
         httpEndpoint: 'https://jungle3.cryptolions.io/'
       }
+    case 'eosMainnet':
+      return {
+        keyProvider: [process.env.PRIVATE_KEY],
+        httpEndpoint: 'https://mainnet.genereos.io'
+      }
     default:
       return null
   }

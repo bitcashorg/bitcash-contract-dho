@@ -43,6 +43,10 @@ const contractsConfig = {
   [supportedChains.telosTestnet]: [
     contract('referendums', 'testrefendum'),
     contract('proposals', 'testproposal'),
+  ],
+  [supportedChains.eosMainnet]: [
+    contract('referendums', 'testrefendum'),
+    contract('proposals', 'testproposal'),
   ]
 }
 
