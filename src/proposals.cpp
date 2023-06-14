@@ -8,7 +8,6 @@
 #include "proposals/extend_debate_proposal.cpp"
 #include "proposals/shorten_debate_proposal.cpp"
 
-
 #include "phases/base_phase.cpp"
 #include "phases/dialog_phase.cpp"
 #include "phases/draft_phase.cpp"
@@ -16,8 +15,7 @@
 
 #include "transitions/base_transition.cpp"
 
-
-ACTION proposals::create (std::map<std::string, common::types::variant_value> & args)
+ACTION proposals::create(std::map<std::string, common::types::variant_value> &args)
 {
   eosio::name creator = util::get_attr<eosio::name>(args, "creator");
   eosio::require_auth(creator);
@@ -28,7 +26,7 @@ ACTION proposals::create (std::map<std::string, common::types::variant_value> & 
   prop->create(args);
 }
 
-ACTION proposals::update (std::map<std::string, common::types::variant_value> & args)
+ACTION proposals::update(std::map<std::string, common::types::variant_value> &args)
 {
   int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
 
@@ -41,7 +39,7 @@ ACTION proposals::update (std::map<std::string, common::types::variant_value> & 
   prop->update(args);
 }
 
-ACTION proposals::cancel (const uint64_t & proposal_id)
+ACTION proposals::cancel(const uint64_t &proposal_id)
 {
   proposal_tables proposals_t(get_self(), get_self().value);
   auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
@@ -50,24 +48,24 @@ ACTION proposals::cancel (const uint64_t & proposal_id)
 
   std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
 
-  std::map<std::string, common::types::variant_value> args = { {"proposal_id", int64_t(proposal_id)} };
+  std::map<std::string, common::types::variant_value> args = {{"proposal_id", int64_t(proposal_id)}};
   prop->cancel(args);
 }
 
-ACTION proposals::move (const uint64_t & proposal_id)
+ACTION proposals::move(const uint64_t &proposal_id)
 {
   proposal_tables proposals_t(get_self(), get_self().value);
   auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
 
-  require_auth(pitr->creator);
+  require_auth(has_auth(pitr->creator) ? pitr->creator : _self);
 
   std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
 
-  std::map<std::string, common::types::variant_value> args = { {"proposal_id", int64_t(proposal_id)} };
+  std::map<std::string, common::types::variant_value> args = {{"proposal_id", int64_t(proposal_id)}};
   prop->move(args);
 }
 
-ACTION proposals::setpconfig (const eosio::name & proposal_type, std::vector<common::types::phase_config> & default_phases)
+ACTION proposals::setpconfig(const eosio::name &proposal_type, std::vector<common::types::phase_config> &default_phases)
 {
   require_auth(get_self());
 
@@ -75,32 +73,29 @@ ACTION proposals::setpconfig (const eosio::name & proposal_type, std::vector<com
   auto pcitr = pconfig_t.find(proposal_type.value);
 
   std::vector<common::types::phase> phases;
-  for (auto & default_phase : default_phases)
+  for (auto &default_phase : default_phases)
   {
     phases.push_back(common::types::factory::create_phase_entry(
-      default_phase.phase_name,
-      default_phase.duration_days,
-      default_phase.type
-    ));
+        default_phase.phase_name,
+        default_phase.duration_days,
+        default_phase.type));
   }
 
   if (pcitr == pconfig_t.end())
   {
-    pconfig_t.emplace(_self, [&](auto & item){
+    pconfig_t.emplace(_self, [&](auto &item)
+                      {
       item.type = proposal_type;
-      item.default_phases = phases;
-    });
+      item.default_phases = phases; });
   }
   else
   {
-    pconfig_t.modify(pcitr, _self, [&](auto & item){
-      item.default_phases = phases;
-    });
+    pconfig_t.modify(pcitr, _self, [&](auto &item)
+                     { item.default_phases = phases; });
   }
 }
 
-
-ACTION proposals::setgparam (const eosio::name & scope, const eosio::name & setting, common::types::variant_value & value)
+ACTION proposals::setgparam(const eosio::name &scope, const eosio::name &setting, common::types::variant_value &value)
 {
   require_auth(get_self());
 
@@ -109,15 +104,14 @@ ACTION proposals::setgparam (const eosio::name & scope, const eosio::name & sett
 
   if (citr == config_t.end())
   {
-    config_t.emplace(_self, [&](auto & item){
+    config_t.emplace(_self, [&](auto &item)
+                     {
       item.setting = setting;
-      item.value = value;
-    });
+      item.value = value; });
   }
   else
   {
-    config_t.modify(citr, _self, [&](auto & item){
-      item.value = value;
-    });
+    config_t.modify(citr, _self, [&](auto &item)
+                    { item.value = value; });
   }
 }
