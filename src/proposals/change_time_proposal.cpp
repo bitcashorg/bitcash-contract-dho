@@ -18,10 +18,10 @@ void ChangeTimeProposal::create_impl(std::map<std::string, common::types::varian
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
   // eosio::check(util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days")) < 5, 'Proposal can not be extended more than 5 days');
-
+  // total days can not be more than 40
   proposals_t.modify(pitr, contract_name, [&](auto &item)
                      {
-    item.special_attributes.insert(std::make_pair("debate", util::get_attr<int64_t>(args, "debate")));
+    item.special_attributes.insert(std::make_pair("debate_days", util::get_attr<int64_t>(args, "debate")));
     item.special_attributes.insert(std::make_pair("prevote", util::get_attr<int64_t>(args, "prevote")));
     item.special_attributes.insert(std::make_pair("voting", util::get_attr<int64_t>(args, "voting"))); });
 }
