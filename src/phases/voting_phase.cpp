@@ -38,7 +38,7 @@ void VotingPhase::start_impl()
     threshold = 55;
     break;
   case 21:
-    threshold = 5;
+    threshold = 50;
     break;
   case 22 ... 23:
     threshold = 55;
@@ -71,12 +71,12 @@ void VotingPhase::start_impl()
   int64_t end_timestamp = phase.start_date.time_since_epoch().count() + (duration_days * common::microseconds_per_day);
 
   std::vector<common::types::day_percentage> quorum_config = {
-      common::types::factory::create_day_percentage_entry(0, threshold),
+      common::types::factory::create_day_percentage_entry(0, 6000),
       // common::types::factory::create_day_percentage_entry(5, 40)
   };
 
   std::vector<common::types::day_percentage> majority_config = {
-      common::types::factory::create_day_percentage_entry(0, 60),
+      common::types::factory::create_day_percentage_entry(0, threshold),
       // common::types::factory::create_day_percentage_entry(5, 40)
   };
 
