@@ -32,7 +32,7 @@ const getChainInfo = () => {
     case 'eosMainnet':
       return {
         keyProvider: [process.env.PRIVATE_KEY],
-        httpEndpoint: 'https://mainnet.genereos.io'
+        httpEndpoint: 'https://eos.greymass.com'
       }
     default:
       return null
