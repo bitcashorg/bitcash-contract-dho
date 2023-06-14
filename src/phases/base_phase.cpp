@@ -119,6 +119,18 @@ void Phase::update_parent()
     uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("prevot", 'e'));
     uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("vot", 'e'));
 
+    size_t i = 0;
+
+    for (; i < pitr->phases.size(); i++)
+    {
+      break;
+      // if (pitr->phases[i].phase == current_phase)
+      // {
+      //   // from_position = i;
+      //   break;
+      // }
+    }
+
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
                       {
       item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
