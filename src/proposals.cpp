@@ -7,6 +7,7 @@
 #include "proposals/amendment_proposal.cpp"
 #include "proposals/extend_debate_proposal.cpp"
 #include "proposals/shorten_debate_proposal.cpp"
+#include "proposals/change_time_proposal.cpp"
 
 #include "phases/base_phase.cpp"
 #include "phases/dialog_phase.cpp"
