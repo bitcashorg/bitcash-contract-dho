@@ -115,6 +115,9 @@ void Phase::update_parent()
   {
 
     uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
+    uint64_t debate_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("debat", 'e'));
+    uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("prevot", 'e'));
+    uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("vot", 'e'));
 
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
                       {
