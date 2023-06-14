@@ -21,9 +21,9 @@ void ChangeTimeProposal::create_impl(std::map<std::string, common::types::varian
 
   proposals_t.modify(pitr, contract_name, [&](auto &item)
                      {
-    item.special_attributes.insert(std::make_pair("debate_days", util::get_attr<int64_t>(args, "debate_days")));
-    item.special_attributes.insert(std::make_pair("pre_vote_days", util::get_attr<int64_t>(args, "pre_vote_days")));
-    item.special_attributes.insert(std::make_pair("vote_days", util::get_attr<int64_t>(args, "vote_days"))); });
+    item.special_attributes.insert(std::make_pair("debate", util::get_attr<int64_t>(args, "debate")));
+    item.special_attributes.insert(std::make_pair("prevote", util::get_attr<int64_t>(args, "prevote")));
+    item.special_attributes.insert(std::make_pair("voting", util::get_attr<int64_t>(args, "voting"))); });
 }
 
 void ChangeTimeProposal::update_impl(std::map<std::string, common::types::variant_value> &args)
@@ -47,9 +47,9 @@ void ChangeTimeProposal::update_impl(std::map<std::string, common::types::varian
 
   proposals_t.modify(pitr, contract_name, [&](auto &item)
                      { 
-    item.special_attributes.insert(std::make_pair("debate_days", util::get_attr<int64_t>(args, "debate_days")));
-    item.special_attributes.insert(std::make_pair("pre_vote_days", util::get_attr<int64_t>(args, "pre_vote_days")));
-    item.special_attributes.insert(std::make_pair("vote_days", util::get_attr<int64_t>(args, "vote_days"))); });
+    item.special_attributes.insert(std::make_pair("debate", util::get_attr<int64_t>(args, "debate")));
+    item.special_attributes.insert(std::make_pair("prevote", util::get_attr<int64_t>(args, "prevote")));
+    item.special_attributes.insert(std::make_pair("voting", util::get_attr<int64_t>(args, "voting"))); });
 }
 
 void ChangeTimeProposal::cancel_impl(std::map<std::string, common::types::variant_value> &args)
