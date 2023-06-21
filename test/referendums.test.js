@@ -68,8 +68,8 @@ describe('Tests for referendums', async function () {
 
     contracts = await getContracts([referendums, token])
 
-    await TokenUtil.create({ 
-      issuer: token, 
+    await TokenUtil.create({
+      issuer: token,
       maxSupply: `1000000000000.0000 ${TokenUtil.tokenCode}`,
       contractAccount: token,
       contract: contracts.token
@@ -97,6 +97,9 @@ describe('Tests for referendums', async function () {
       table: 'referendums',
       json: true
     })
+
+
+    console.log(referendumTables.rows[0].quorum_config)
 
     expect(referendumTables.rows).to.deep.equals([{
       referendum_id: 1,
@@ -180,10 +183,10 @@ describe('Tests for referendums', async function () {
       // Arrange
       const now = new Date()
       now.setMilliseconds(now.getMilliseconds() + 500)
-  
+
       const referendum = await ReferendumsFactory.createWithDefaults({ startDate: now })
       const actionParams = referendum.getActionParams()
-  
+
       await contracts.referendums.create(...actionParams, { authorization: `${referendums}@active` })
       await sleep(1000)
       await contracts.referendums.start(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })
@@ -240,7 +243,7 @@ describe('Tests for referendums', async function () {
     const now = new Date()
     now.setMilliseconds(now.getMilliseconds() + 500)
 
-    const referendum = await ReferendumsFactory.createWithDefaults({ 
+    const referendum = await ReferendumsFactory.createWithDefaults({
       startDate: now,
       quorumConfig: [{ start_day: 0, percentage: 8500 }],
       majorityConfig: [{ start_day: 0, percentage: 5500 }]
@@ -252,8 +255,8 @@ describe('Tests for referendums', async function () {
     await contracts.referendums.start(referendum.params.referendumId, { authorization: `${referendum.params.creator}@active` })
 
     const amounts = [100000, 50000, 30000, 20000]
-    const votingOrder = [ReferendumConstants.VoteFavour, ReferendumConstants.VoteAgainst, 
-      ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAbstain]
+    const votingOrder = [ReferendumConstants.VoteFavour, ReferendumConstants.VoteAgainst,
+    ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAbstain]
 
     for (let i = 0; i < votingOrder.length; i++) {
       const voter = await createRandomAccount()
@@ -299,10 +302,10 @@ describe('Tests for referendums', async function () {
 
 
   const finishRejectCases = [
-    { 
+    {
       testName: 'Referendum is rejected if it has enough against votes',
       amounts: [1000, 50000, 30000, 20000],
-      votingOrder: [ReferendumConstants.VoteFavour, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAbstain]  
+      votingOrder: [ReferendumConstants.VoteFavour, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAgainst, ReferendumConstants.VoteAbstain]
     },
     {
       testName: 'Referendum is rejected if it does not meet the required quorum',
@@ -317,7 +320,7 @@ describe('Tests for referendums', async function () {
       const now = new Date()
       now.setMilliseconds(now.getMilliseconds() + 500)
 
-      const referendum = await ReferendumsFactory.createWithDefaults({ 
+      const referendum = await ReferendumsFactory.createWithDefaults({
         startDate: now,
         quorumConfig: [{ start_day: 0, percentage: 8500 }],
         majorityConfig: [{ start_day: 0, percentage: 5500 }]

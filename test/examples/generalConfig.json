@@ -1,6 +1,9 @@
 {
   "main": {
-    "minstake": ["asset", "100.0000 BANK"]
+    "minstake": [
+      "asset", "100.0000 BANK"
+    ],
+    "quorum": ["u64", 10]
   },
 
   "amendment": {
