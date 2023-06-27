@@ -1,18 +1,18 @@
 {
-    "main": {
-      "minstake": ["asset", "100.0000 BANK"]
-    },
-  
-    "amendment": {
-      "minstake": ["asset", "10.0000 BANK"]
-    },
-  
-    "extenddebate": {
-      "minstake": ["asset", "10.0000 BANK"]
-    },
-  
-    "shortndebate": {
-      "minstake": ["asset", "10.0000 BANK"]
-    }
-  
+  "main": {
+    "minstake": ["asset", "100.0000 MOCKEOS"]
+  },
+
+  "amendment": {
+    "minstake": ["asset", "10.0000 MOCKEOS"]
+  },
+
+  "extenddebate": {
+    "minstake": ["asset", "10.0000 MOCKEOS"]
+  },
+
+  "shortndebate": {
+    "minstake": ["asset", "10.0000 MOCKEOS"]
+  }
+
 }
