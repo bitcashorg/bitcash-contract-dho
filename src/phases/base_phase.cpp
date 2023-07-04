@@ -82,9 +82,7 @@ void Phase::update_parent()
   {
 
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
-                      {
-      item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
-      item.special_attributes.at("budget") = pitr->special_attributes.at("budget"); });
+                      { item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end()); });
   }
 
   if (pitr->type == common::proposals::type_extend_debate)
