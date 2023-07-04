@@ -112,7 +112,6 @@ void Phase::update_parent()
   if (pitr->type == common::proposals::type_change_time)
   {
 
-    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
     uint64_t debate_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("debat", 'e'));
     uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("prevot", 'e'));
     uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("vot", 'e'));
@@ -121,18 +120,32 @@ void Phase::update_parent()
 
     for (; i < pitr->phases.size(); i++)
     {
-      break;
-      // if (pitr->phases[i].phase == current_phase)
-      // {
-      //   // from_position = i;
-      //   break;
-      // }
-    }
+      switch (pitr->phases[i].phase)
+      {
+      case common::proposals::phase_debate:
+        proposal_t.modify(ppitr, contract_name, [&](auto &item)
+                          {
+          item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+          item.phases[i].duration_days = debate_days; });
+        break;
 
+      case common::proposals::phase_debate_voting:
+        proposal_t.modify(ppitr, contract_name, [&](auto &item)
+                          {
+          item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+          item.phases[i].duration_days = prevote_days; });
+        break;
+
+      case common::proposals::phase_voting:
+        proposal_t.modify(ppitr, contract_name, [&](auto &item)
+                          {
+          item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
+          item.phases[i].duration_days = vote_days; });
+        break;
+      }
+    }
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
-                      {
-      item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
-      item.phases[position].duration_days -= days; });
+                      { item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end()); });
   }
 }
 
