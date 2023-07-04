@@ -23,7 +23,7 @@ void ChangeTimeProposal::create_impl(std::map<std::string, common::types::varian
                      {
     item.special_attributes.insert(std::make_pair("debate_days", util::get_attr<int64_t>(args, "debate_days")));
     item.special_attributes.insert(std::make_pair("prevote_days", util::get_attr<int64_t>(args, "prevote_days")));
-    item.special_attributes.insert(std::make_pair("voting_days  ", util::get_attr<int64_t>(args, "voting_days "))); });
+    item.special_attributes.insert(std::make_pair("voting_days  ", util::get_attr<int64_t>(args, "voting_days"))); });
 }
 
 void ChangeTimeProposal::update_impl(std::map<std::string, common::types::variant_value> &args)
