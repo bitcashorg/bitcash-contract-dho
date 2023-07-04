@@ -18,6 +18,8 @@ namespace common
   namespace settings
   {
     constexpr eosio::name min_stake = "minstake"_n;
+    constexpr eosio::name vote_threshold = "votethresh"_n;
+    constexpr eosio::name quorum = "quorum"_n;
   }
 
   namespace referendums

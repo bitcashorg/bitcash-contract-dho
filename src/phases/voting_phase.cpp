@@ -70,8 +70,11 @@ void VotingPhase::start_impl()
   int64_t duration_days = (phase.duration_days != common::proposals::phases::undefined_duration_days) ? phase.duration_days : 10;
   int64_t end_timestamp = phase.start_date.time_since_epoch().count() + (duration_days * common::microseconds_per_day);
 
+  eosio::name scope = pitr->type;
+  uint64_t quorum = util::get_setting<proposals::config_tables, int64_t>(contract_name, scope, common::settings::quorum);
+
   std::vector<common::types::day_percentage> quorum_config = {
-      common::types::factory::create_day_percentage_entry(0, 6000),
+      common::types::factory::create_day_percentage_entry(0, quorum),
       // common::types::factory::create_day_percentage_entry(5, 40)
   };
 
