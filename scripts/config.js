@@ -8,9 +8,9 @@ const contract = (name, nameOnChain) => {
     nameOnChain,
     type: 'contract',
     stakes: {
-      cpu: '20.0000 EOS',
-      net: '20.0000 EOS',
-      ram: 2000000
+      cpu: '1.0000 EOS',
+      net: '1.0000 EOS',
+      ram: 1000000
     }
   }
 }
@@ -45,8 +45,8 @@ const contractsConfig = {
     contract('proposals', 'testproposal'),
   ],
   [supportedChains.eosMainnet]: [
-    contract('referendums', 'testrefendum'),
-    contract('proposals', 'testproposal'),
+    contract('proposals', 'eosmakeprops'),
+    contract('referendums', 'eospropvotes'),
   ]
 }
 

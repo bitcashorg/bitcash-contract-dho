@@ -1,9 +1,17 @@
 cleos -u https://eos.greymass.com push action eosio updateauth '{
-    "account": "testproposal",
-    "permission": "active",
-    "parent": "owner" ,
+    "account": "eospropvotes",
+    "permission": "owner",
+    "parent": "" ,
     "auth": {
         "keys": [
+            {
+                "key": "EOS73BQAiofDo4Eq57HyhrYmKxj8VXFSz5YSPcduQgctnXTDHzqtZ",
+                "weight": 1
+            },
+            {
+                "key": "EOS7XUQhbWMpQPJpRouGSWMtdnyBcqkGkyM5x3BzcMSCfuEXB8LBi",
+                "weight": 1
+            },
             {
                 "key": "EOS8UQqzawtRUwtozSTPYLoyWv1ms1RKVrqVQikfQi5C77HFnFB51",
                 "weight": 1
@@ -21,4 +29,4 @@ cleos -u https://eos.greymass.com push action eosio updateauth '{
         ],
         "waits": []
     }
-}' -p testproposal@owner
+}' -p eospropvotes@owner

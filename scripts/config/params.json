@@ -1,37 +1,22 @@
 {
   "main": {
-    "minstake": [
-      "asset", "10.0000 MOCKEOS"
-    ],
-    "votethresh": [
-      "int64", 15
-    ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "minstake": ["asset", "100.0000 MOCKEOS"]
   },
+
   "amendment": {
-    "minstake": [
-      "asset", "1.0000 MOCKEOS"
-    ],
-    "votethresh": [
-      "int64", 15
-    ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "minstake": ["asset", "1.0000 MOCKEOS"]
   },
 
   "changetime": {
-    "minstake": [
-      "asset", "1.0000 MOCKEOS"
-    ],
-    "votethresh": [
-      "int64", 15
-    ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "minstake": ["asset", "1.0000 MOCKEOS"]
   },
 
   "extenddebate": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": ["asset", "10.0000 MOCKEOS"]
   },
+
   "shortndebate": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": ["asset", "10.0000 MOCKEOS"]
   }
+
 }

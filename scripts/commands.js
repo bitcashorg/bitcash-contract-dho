@@ -66,7 +66,7 @@ async function init() {
 
 async function setParamsValue() {
   console.log('SETTING CONTRACTS PARAMETERS\n')
-  await setConfig()
+  // await setConfig()
   await setPhases()
 
   console.log('setting parameters finished\n\n')
