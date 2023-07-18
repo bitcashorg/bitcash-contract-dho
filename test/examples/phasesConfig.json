@@ -30,10 +30,6 @@
 
   "extenddebate": [
     {
-      "phaseName": "debate",
-      "durationDays": 10,
-      "type": "dialog"
-    }, {
       "phaseName": "vote",
       "durationDays": 3,
       "type": "voting"
