@@ -4,5 +4,10 @@
     "eosio"
   ],
   "editor.formatOnPaste": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "*.vue": "vue",
+    "utility": "cpp",
+    "map": "cpp"
+  }
 }
