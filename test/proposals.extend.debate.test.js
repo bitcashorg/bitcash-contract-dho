@@ -199,9 +199,6 @@ describe('Tests for extend debate proposals', async function () {
       }
     })
 
-    console.log(phases)
-
-
     await passReferendum(contracts, 1)
 
     const proposal_extend_debate = await ProposalsFactory.createExtendDebateWithDefaults({})
@@ -277,10 +274,5 @@ describe('Tests for extend debate proposals', async function () {
       json: true
     })
     console.log(JSON.stringify(proposalsTable, null, 4))
-
-
-
   })
-
-
 })
