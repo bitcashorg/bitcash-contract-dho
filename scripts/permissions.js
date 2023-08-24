@@ -31,9 +31,7 @@ async function updateAuth({ account, permission, parent, auth }, { authorization
         },
       }]
   }
-  console.log("🚀 ~ file: permissions.js ~ line 34 ~ updateAuth ~ tran", tran)
-  
-  
+
   return transact({
     actions: [
       {
