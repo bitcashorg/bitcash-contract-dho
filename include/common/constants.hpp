@@ -2,26 +2,16 @@
 
 #include <eosio/eosio.hpp>
 
-//! Change this constants to the environment you are deploying to
 namespace common
 {
-  //! pre-production
-  // const eosio::symbol token_symbol = eosio::symbol("MOCKEOS", 4);
-  //! production
   const eosio::symbol token_symbol = eosio::symbol("EOS", 4);
   const int64_t microseconds_per_day = 86400000000;
 
   namespace contracts
   {
-
-    //! pre-production
-    constexpr eosio::name bank_token = "mockeostoken"_n;
-    constexpr eosio::name proposals = "testproposal"_n;
-    constexpr eosio::name referendums = "testrefendum"_n;
-
-    //! production
-    // const eosio::name bank_token = "eosio.token"_n;
-
+    constexpr eosio::name bank_token = "eosio.token"_n;
+    constexpr eosio::name proposals = "eosmakeprops"_n;
+    constexpr eosio::name referendums = "eospropvotes"_n;
   }
 
   namespace settings
