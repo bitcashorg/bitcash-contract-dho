@@ -2,10 +2,10 @@ const { assertError } = require('../../scripts/eosio-errors')
 
 class TokenUtil {
 
-  static tokenCode = 'BANK'
+  static tokenCode = 'EOS'
   static tokenPrecision = 4
 
-  static async create ({ issuer, maxSupply, contractAccount, contract }) {
+  static async create({ issuer, maxSupply, contractAccount, contract }) {
     try {
       await contract.create(issuer, maxSupply, { authorization: `${contractAccount}@active` })
     } catch (error) {
@@ -17,7 +17,7 @@ class TokenUtil {
     }
   }
 
-  static async issue ({ amount, issuer, contract }) {
+  static async issue({ amount, issuer, contract }) {
     await contract.issue(issuer, amount, 'issued token', { authorization: `${issuer}@active` })
   }
 
