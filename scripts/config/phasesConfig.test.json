@@ -31,23 +31,5 @@
       "durationDays": 2,
       "type": "voting"
     }
-  ],
-  "extenddebate": [
-    {
-      "phaseName": "vote",
-      "durationDays": 3,
-      "type": "voting"
-    }
-  ],
-  "shortndebate": [
-    {
-      "phaseName": "debate",
-      "durationDays": 10,
-      "type": "dialog"
-    }, {
-      "phaseName": "vote",
-      "durationDays": 3,
-      "type": "voting"
-    }
   ]
 }

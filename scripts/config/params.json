@@ -1,22 +1,37 @@
 {
   "main": {
-    "minstake": ["asset", "100.0000 MOCKEOS"]
+    "minstake": [
+      "asset", "10.0000 EOS"
+    ],
+    "quorum": ["asset", "10000.0000 EOS"]
   },
 
   "amendment": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": [
+      "asset", "10.0000 EOS"
+    ],
+    "quorum": ["asset", "10000.0000 EOS"]
   },
 
   "changetime": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": [
+      "asset", "10.0000 EOS"
+    ],
+    "quorum": ["asset", "10000.0000 EOS"]
   },
 
   "extenddebate": {
-    "minstake": ["asset", "10.0000 MOCKEOS"]
+    "minstake": [
+      "asset", "10.0000 EOS"
+    ],
+    "quorum": ["asset", "10000.0000 EOS"]
   },
 
   "shortndebate": {
-    "minstake": ["asset", "10.0000 MOCKEOS"]
+    "minstake": [
+      "asset", "10.0000 EOS"
+    ],
+    "quorum": ["asset", "10000.0000 EOS"]
   }
 
 }
