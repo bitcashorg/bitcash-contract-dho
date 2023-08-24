@@ -26,8 +26,8 @@ const supportedChains = {
 const contractsConfig = {
   [supportedChains.local]: [
     contract('nullcontract', 'm1nullcntrct'),
-    contract('referendums', 'bitcash.refm'),
-    contract('proposals', 'bitcash.prop'),
+    contract('referendums', 'eospropvotes'),
+    contract('proposals', 'eosmakeprops'),
     contract('token', 'eosio.token')
   ],
   [supportedChains.jungleTestnet]: [
@@ -45,8 +45,8 @@ const contractsConfig = {
     contract('proposals', 'testproposal'),
   ],
   [supportedChains.eosMainnet]: [
-    contract('proposals', 'eosmakeprops'),
     contract('referendums', 'eospropvotes'),
+    contract('proposals', 'eosmakeprops')
   ]
 }
 

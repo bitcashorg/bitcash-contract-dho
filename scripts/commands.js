@@ -1,5 +1,5 @@
 const { contracts, publicKeys, owner, chain, sleep, isLocalNode } = require('./config')
-const { compileContract } = require('./compile')
+const { compileContract, updateConstants } = require('./compile')
 const { createAccount, deployContract } = require('./deploy')
 const { accountExists, contractRunningSameCode } = require('./eosio-errors')
 const { updatePermissions } = require('./permissions')
@@ -30,17 +30,7 @@ async function manageDeployment(contract) {
 
 async function init() {
 
-  // compile contracts
-  console.log('COMPILING CONTRACTS\n')
-
-  await Promise.all(contracts.map(contract => {
-    return compileContract({
-      contract: contract.name,
-      path: `./src/${contract.name}.cpp`
-    })
-  }))
-
-  console.log('compilation finished\n\n')
+  await compile()
 
   // deploy contracts
   console.log('DEPLOYING CONTRACTS\n')
@@ -82,6 +72,9 @@ async function run(contractName) {
     return
   }
 
+  console.log(`Setting ${process.env.ENV_NAME} constants`)
+  await updateConstants()
+
   await compileContract({
     contract: contract.name,
     path: `./src/${contract.name}.cpp`
@@ -92,6 +85,9 @@ async function run(contractName) {
 }
 
 async function compile() {
+
+  console.log(`Setting ${process.env.ENV_NAME} constants`)
+  await updateConstants()
 
   // compile contracts
   console.log('COMPILING CONTRACTS\n')

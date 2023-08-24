@@ -7,20 +7,25 @@ const { join } = require('path')
 
 const execCommand = promisify(exec)
 
-async function deleteFile (filePath) {
+async function deleteFile(filePath) {
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath)
   }
-} 
+}
 
-async function compileContract ({
+async function copyFile(source, target) {
+  if (fs.existsSync(source)) {
+    fs.copyFileSync(source, target)
+  }
+}
+
+async function compileContract({
   contract,
   path
 }) {
 
   const compiled = join(__dirname, '../compiled')
   let cmd = ""
-  
   if (process.env.COMPILER === 'local') {
     cmd = `eosio-cpp -abigen -I ./include -contract ${contract} -o ./compiled/${contract}.wasm ${path}`
   } else {
@@ -39,4 +44,19 @@ async function compileContract ({
 
 }
 
-module.exports = { compileContract }
+async function updateConstants() {
+  if (process.env.ENV_NAME === 'development') {
+    await copyFile(join(__dirname, '../include/common/constants.prod.hpp'),
+      join(__dirname, '../include/common/constants.hpp'))
+  }
+  if (process.env.ENV_NAME === 'production') {
+    await copyFile(join(__dirname, '../include/common/constants.prod.hpp'),
+      join(__dirname, '../include/common/constants.hpp'))
+  }
+  if (process.env.ENV_NAME === 'pre-production') {
+    await copyFile(join(__dirname, '../include/common/constants.preprod.hpp'),
+      join(__dirname, '../include/common/constants.hpp'))
+  }
+}
+
+module.exports = { compileContract, updateConstants }
