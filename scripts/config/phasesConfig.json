@@ -1,10 +1,6 @@
 {
   "main": [
     {
-      "phaseName": "debate",
-      "durationDays": 7,
-      "type": "dialog"
-    }, {
       "phaseName": "prevote",
       "durationDays": 7,
       "type": "voting"
@@ -16,10 +12,6 @@
   ],
   "amendment": [
     {
-      "phaseName": "debate",
-      "durationDays": 7,
-      "type": "dialog"
-    }, {
       "phaseName": "vote",
       "durationDays": 7,
       "type": "voting"
