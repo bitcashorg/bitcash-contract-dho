@@ -45,8 +45,10 @@ const contractsConfig = {
     contract('proposals', 'testproposal'),
   ],
   [supportedChains.eosMainnet]: [
-    contract('referendums', 'eospropvotes'),
-    contract('proposals', 'eosmakeprops')
+    // contract('referendums', 'eospropvotes'),
+    // contract('proposals', 'eosmakeprops')
+    contract('proposals', 'testproposal'),
+    contract('referendums', 'testrefendum'),
   ]
 }
 
