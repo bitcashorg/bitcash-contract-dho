@@ -16,7 +16,6 @@ class ConfigUtil {
   }
 
   async setGeneralConfig(params, auth) {
-    console.log('params', params)
     await this.contract.setgparam(...params, { authorization: `${auth}@active` })
   }
 
