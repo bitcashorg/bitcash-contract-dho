@@ -96,13 +96,9 @@ class ConfigGeneralBuilder extends ConfigBuilder {
     const scopes = Object.keys(conf)
     for (const scope of scopes) {
       const constantsInfo = conf[scope]
-
       const constants = Object.keys(constantsInfo)
-      console.log('constants', constants)
-
       for (const c of constants) {
         const params = [scope, c, constantsInfo[c]]
-        console.log(scope, c, constantsInfo[c])
         await this.configUtil.setGeneralConfig(params, this.authorization)
       }
     }
