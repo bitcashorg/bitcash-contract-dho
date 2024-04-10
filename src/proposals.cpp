@@ -16,6 +16,18 @@
 
 #include "transitions/base_transition.cpp"
 
+ACTION proposals::reset()
+{
+  require_auth(get_self());
+
+  proposal_tables proposals_t(_self, _self.value);
+  auto proposal_itr = proposals_t.begin();
+  while (proposal_itr != proposals_t.end())
+  {
+    proposal_itr = proposals_t.erase(proposal_itr);
+  }
+}
+
 ACTION proposals::create(std::map<std::string, common::types::variant_value> &args)
 {
   eosio::name creator = util::get_attr<eosio::name>(args, "creator");
