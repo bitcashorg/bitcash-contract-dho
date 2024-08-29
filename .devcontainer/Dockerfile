@@ -1,11 +1,13 @@
 FROM mcr.microsoft.com/devcontainers/base:focal
 
+# Install tmux
+RUN apt-get update && \
+  apt install -y tmux
+
 RUN apt update \
     && apt install -y \
         libtinfo5 \
         libpq5
-
-
 
 # Install EOSIO
 ARG EOSIO_VERSION=2.1.0
