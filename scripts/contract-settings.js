@@ -28,7 +28,7 @@ async function getConfig() {
 async function setPhases() {
   let contracts
   contracts = await getContracts([proposals])
-  
+
   const configEngineerPhases = new ConfigEngineer(new ConfigPhasesBuilder(contracts.proposals, proposals))
   await configEngineerPhases.execute({})
 
