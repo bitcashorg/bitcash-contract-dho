@@ -16,6 +16,10 @@ ARG EOSIO_BINARY=eosio_${EOSIO_VERSION}-1-ubuntu-20.04_amd64.deb
 RUN wget https://github.com/eosio/eos/releases/download/v${EOSIO_VERSION}/${EOSIO_BINARY} \
     && apt install -y ./${EOSIO_BINARY} \
     && rm ${EOSIO_BINARY}
+
+RUN wget https://github.com/eosio/eosio.cdt/releases/download/v1.8.0/eosio.cdt_1.8.0-1-ubuntu-20.04_amd64.deb
+
+RUN sudo apt install ./eosio.cdt_1.8.0-1-ubuntu-20.04_amd64.deb
     
 RUN cleos wallet create -f /tmp/wallet_password.txt
 # Install nvm
@@ -35,7 +39,3 @@ ENV PATH=$NVM_DIR/v$NODE_VERSION/bin:$PATH
 
 # Make nvm available to the user vscode
 RUN echo "source /usr/local/nvm/nvm.sh" >> /home/vscode/.bashrc
-
-
-# RUN echo "source /root/~/nvm/nvm.sh" >> /home/vscode/.bashrc
-
