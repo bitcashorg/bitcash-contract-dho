@@ -47,7 +47,11 @@ async function init() {
   console.log('update permissions finished\n\n')
 
   console.log('SETTING CONTRACTS PARAMETERS\n')
+
+  console.log('setting config')
   await setConfig()
+
+  console.log('setting phases')
   await setPhases()
 
   console.log('setting parameters finished\n\n')
@@ -56,7 +60,10 @@ async function init() {
 
 async function setParamsValue() {
   console.log('SETTING CONTRACTS PARAMETERS\n')
+  // console.log('setting config')
   // await setConfig()
+
+  console.log('setting phases')
   await setPhases()
 
   console.log('setting parameters finished\n\n')

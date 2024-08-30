@@ -27,7 +27,7 @@ class EnvironmentUtil {
 
   static nodeosName = 'nodeos'
 
-  static async initNode () {
+  static async initNode() {
     const nodeosCommand = `nodeos -e -p eosio \
     --plugin eosio::producer_plugin \
     --plugin eosio::chain_api_plugin \
@@ -42,7 +42,7 @@ class EnvironmentUtil {
     execCommand(command)
   }
 
-  static async deployContracts (contracts) {
+  static async deployContracts(contracts) {
     for (const contract of contracts) {
       try {
         await createAccount({
@@ -62,13 +62,13 @@ class EnvironmentUtil {
     }
   }
 
-  static async updatePermissions () {
+  static async updatePermissions() {
     await updatePermissions()
   }
 
-  static async killNode () {
-    const command = `docker kill ${EnvironmentUtil.nodeosName}`
-    await execCommand(command)
+  static async killNode() {
+    // const command = `docker kill ${EnvironmentUtil.nodeosName}`
+    // await execCommand(command)
   }
 
 }

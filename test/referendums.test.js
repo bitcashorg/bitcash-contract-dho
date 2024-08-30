@@ -59,9 +59,7 @@ describe('Tests for referendums', async function () {
       console.log('These tests should only be run on a local node')
       process.exit(1)
     }
-  })
 
-  beforeEach(async function () {
     await EnvironmentUtil.initNode()
     await sleep(4000)
     await EnvironmentUtil.deployContracts(configContracts)

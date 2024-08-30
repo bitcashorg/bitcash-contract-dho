@@ -28,7 +28,7 @@ ACTION referendums::create(
   eosio::time_point now = eosio::current_time_point();
 
   eosio::check(start_date >= now, "can not create a referendum in the past");
-  eosio::check(end_date >= start_date, "end date must be greater or equal than the start date");
+  eosio::check(end_date >= start_date, "end date must be greater or equal than the start date " + start_date.to_string() + " " + end_date.to_string());
 
   check_day_percentage(quorum_config, std::string("quorum config"));
   check_day_percentage(majority_config, std::string("majority config"));

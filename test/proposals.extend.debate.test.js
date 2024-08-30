@@ -66,9 +66,7 @@ describe('Tests for extend debate proposals', async function () {
       console.log('These tests should only be run on a local node')
       process.exit(1)
     }
-  })
 
-  beforeEach(async function () {
     await EnvironmentUtil.initNode()
     await sleep(4000)
     await EnvironmentUtil.deployContracts(configContracts)
@@ -107,10 +105,6 @@ describe('Tests for extend debate proposals', async function () {
 
 
 
-  })
-
-  afterEach(async function () {
-    await EnvironmentUtil.killNode()
   })
   /*
     it('An account can not create an extend dabate when main proposal is not on debate phase', async function () {
