@@ -14,7 +14,7 @@ const { proposals, token, referendums } = contractNames
 
 
 
-async function passReferendum (contracts, proposalId) {
+async function passReferendum(contracts, proposalId) {
   const amounts = [100000, 50000]
 
   const proposalsTable = await rpc.get_table_rows({
@@ -64,9 +64,7 @@ describe('Tests for main proposals', async function () {
       console.log('These tests should only be run on a local node')
       process.exit(1)
     }
-  })
 
-  beforeEach(async function () {
     await EnvironmentUtil.initNode()
     await sleep(4000)
     await EnvironmentUtil.deployContracts(configContracts)
@@ -74,8 +72,8 @@ describe('Tests for main proposals', async function () {
 
     contracts = await getContracts([proposals, token, referendums])
 
-    await TokenUtil.create({ 
-      issuer: token, 
+    await TokenUtil.create({
+      issuer: token,
       maxSupply: `1000000000000.0000 ${TokenUtil.tokenCode}`,
       contractAccount: token,
       contract: contracts.token
@@ -151,88 +149,88 @@ describe('Tests for main proposals', async function () {
     })
 
   })
-/*
-  it("The proposal's owner can update the main proposal if it is in discussion phase", async function () {
-
-    // Arrange
-    const proposal = await ProposalsFactory.createMainWithDefaults({})
-
-    const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
-    const configUtil = await configEngineerGeneral.execute({})
-
-    const minstake = configUtil.config['main']['minstake'][1]
-
-    await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
-    await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
-
-    await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
-
-    const d = new Date()
-    d.setDate(d.getDate() + 40)
-
-    let budget = new Asset(5000000, TokenUtil.tokenCode, TokenUtil.tokenPrecision)
-    budget = budget.toString()
-
-    const updatedFields = {
-      proposalId: 1,
-      creator: proposal.params.creator,
-      title: 'updated title',
-      description: 'updated description',
-      kpi: 'updated kpis',
-      deadline: formatTimePoint(d),
-      budget
-    }
-
-    const proposalUpdated = await ProposalsFactory.createMainWithDefaults(updatedFields)
-
-
-    // Act
-    await contracts.proposals.update(proposalUpdated.getActionParams(), { authorization: `${proposalUpdated.params.creator}@active` })
-
-
-    // Assert
-    const proposalsTable = await rpc.get_table_rows({
-      code: proposals,
-      scope: proposals,
-      table: 'proposals',
-      json: true
+  /*
+    it("The proposal's owner can update the main proposal if it is in discussion phase", async function () {
+  
+      // Arrange
+      const proposal = await ProposalsFactory.createMainWithDefaults({})
+  
+      const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
+      const configUtil = await configEngineerGeneral.execute({})
+  
+      const minstake = configUtil.config['main']['minstake'][1]
+  
+      await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
+      await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
+  
+      await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
+  
+      const d = new Date()
+      d.setDate(d.getDate() + 40)
+  
+      let budget = new Asset(5000000, TokenUtil.tokenCode, TokenUtil.tokenPrecision)
+      budget = budget.toString()
+  
+      const updatedFields = {
+        proposalId: 1,
+        creator: proposal.params.creator,
+        title: 'updated title',
+        description: 'updated description',
+        kpi: 'updated kpis',
+        deadline: formatTimePoint(d),
+        budget
+      }
+  
+      const proposalUpdated = await ProposalsFactory.createMainWithDefaults(updatedFields)
+  
+  
+      // Act
+      await contracts.proposals.update(proposalUpdated.getActionParams(), { authorization: `${proposalUpdated.params.creator}@active` })
+  
+  
+      // Assert
+      const proposalsTable = await rpc.get_table_rows({
+        code: proposals,
+        scope: proposals,
+        table: 'proposals',
+        json: true
+      })
+      console.log(JSON.stringify(proposalsTable, null, 4))
+  
     })
-    console.log(JSON.stringify(proposalsTable, null, 4))
-
-  })
-
-  it("The proposal's owner can cancel the main proposal if it is in discussion phase", async function () {
-
-    // Arrange
-    const proposal = await ProposalsFactory.createMainWithDefaults({})
-
-    const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
-    const configUtil = await configEngineerGeneral.execute({})
-
-    const minstake = configUtil.config['main']['minstake'][1]
-
-    await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
-    await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
-
-    await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
-
-
-    // Act
-    await contracts.proposals.cancel(1, { authorization: `${proposal.params.creator}@active` })
-
-
-    // Assert
-    const proposalsTable = await rpc.get_table_rows({
-      code: proposals,
-      scope: proposals,
-      table: 'proposals',
-      json: true
+  
+    it("The proposal's owner can cancel the main proposal if it is in discussion phase", async function () {
+  
+      // Arrange
+      const proposal = await ProposalsFactory.createMainWithDefaults({})
+  
+      const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
+      const configUtil = await configEngineerGeneral.execute({})
+  
+      const minstake = configUtil.config['main']['minstake'][1]
+  
+      await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
+      await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
+  
+      await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
+  
+  
+      // Act
+      await contracts.proposals.cancel(1, { authorization: `${proposal.params.creator}@active` })
+  
+  
+      // Assert
+      const proposalsTable = await rpc.get_table_rows({
+        code: proposals,
+        scope: proposals,
+        table: 'proposals',
+        json: true
+      })
+      
+      expect(proposalsTable.rows).to.be.empty
+  
     })
-    
-    expect(proposalsTable.rows).to.be.empty
-
-  })
-*/
+  */
   const phasesTests = [
     {
       testDescription: 'The main proposal can move from debate to prevote',
@@ -277,30 +275,30 @@ describe('Tests for main proposals', async function () {
       const proposal = await ProposalsFactory.createMainWithDefaults({
         phases
       })
-  
+
       const configEngineerGeneral = new ConfigEngineer(new ConfigGeneralBuilder(contracts.proposals, proposals))
       const configUtil = await configEngineerGeneral.execute({})
-  
+
       const minstake = configUtil.config['main']['minstake'][1]
-  
+
       await TokenUtil.issue({ amount: minstake, issuer: token, contract: contracts.token })
       await contracts.token.transfer(token, proposal.params.creator, minstake, 'initial supply for creating a proposal', { authorization: `${token}@active` })
-      
+
       await contracts.proposals.create(proposal.getActionParams(), { authorization: `${proposal.params.creator}@active` })
 
 
-      for (let i = 0; i < index-1; i++) {
+      for (let i = 0; i < index - 1; i++) {
         await passReferendum(contracts, 1)
         await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
       }
 
       await passReferendum(contracts, 1)
-  
-  
+
+
       // Act
       // await contracts.proposals.move(1, { authorization: `${proposal.params.creator}@active` })
-  
-  
+
+
       // Assert
       const proposalsTable = await rpc.get_table_rows({
         code: proposals,
@@ -317,7 +315,7 @@ describe('Tests for main proposals', async function () {
         json: true
       })
       console.log(JSON.stringify(referendumsTable, null, 4))
-  
+
     })
 
   })
