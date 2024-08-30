@@ -8,8 +8,11 @@ void VotingPhase::start_impl()
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
   auto ppitr = proposal_t.find(pitr->parent);
-
-  check(ppitr->awaiting.size() != 0, "Can not start voting, we are waiting another proposal!");
+  // check if we are waiting for another proposal
+  if (ppitr != proposal_t.end())
+  {
+    eosio::check(ppitr->awaiting.size() != 0, "Can not start voting, we are waiting another proposal!");
+  }
 
   uint64_t total_days = 0;
 
@@ -69,7 +72,7 @@ void VotingPhase::start_impl()
 
   int64_t duration_days = (phase.duration_days != common::proposals::phases::undefined_duration_days) ? phase.duration_days : 10;
   int64_t end_timestamp = phase.start_date.time_since_epoch().count() + (duration_days * common::microseconds_per_day);
-
+  eosio::check(end_timestamp > eosio::current_time_point().time_since_epoch().count(), "can not start voting, the phase has already ended");
   eosio::name scope = pitr->type;
   eosio::asset quorum = util::get_setting<proposals::config_tables, eosio::asset>(contract_name, scope, common::settings::quorum);
 
@@ -91,8 +94,8 @@ void VotingPhase::start_impl()
           referendum_id,
           pitr->creator,
           phase.start_date,
-          quorum,
           eosio::time_point(eosio::microseconds(end_timestamp)),
+          quorum,
           quorum_config,
           majority_config))
       .send();
