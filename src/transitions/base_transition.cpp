@@ -7,7 +7,6 @@ void Transition::execute (const uint64_t & proposal_id)
   auto pitr = proposals_t.require_find(proposal_id, util::to_str("proposal with id ", proposal_id, " was not found").c_str());
 
   auto [from, to] = getFromTo(pitr->current_phase, pitr->phases, proposal_id);
-
   from->end();
 
   if (to != nullptr)
