@@ -50,6 +50,13 @@ const contractsConfig = {
   ]
 }
 
+if (process.env.ENV_NAME === 'pre-production') {
+  contractsConfig[supportedChains.eosMainnet] = [
+    contract('referendums', 'testrefendum'),
+    contract('proposals', 'testproposal')
+  ]
+}
+
 const ownerByChain = {
   [supportedChains.local]: 'eosio',
   [supportedChains.jungleTestnet]: 'tlalocman123',
