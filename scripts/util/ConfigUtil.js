@@ -75,6 +75,8 @@ class ConfigPhasesBuilder extends ConfigBuilder {
       params.push(phasesConfig)
 
       await this.configUtil.setPhases(params, this.authorization)
+      // wait two seconds to avoid error
+      await new Promise(resolve => setTimeout(resolve, 2000))
     }
 
     this.configUtil.setConfig(conf)
