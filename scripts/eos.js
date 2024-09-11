@@ -33,6 +33,7 @@ const getChainInfo = () => {
       return {
         keyProvider: [process.env.PRIVATE_KEY],
         httpEndpoint: 'https://eos.greymass.com'
+        // httpEndpoint: 'https://api.eosnewyork.io/'
       }
     default:
       return null
