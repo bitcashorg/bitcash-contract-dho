@@ -4,6 +4,7 @@ const { createAccount, deployContract } = require('./deploy')
 const { accountExists, contractRunningSameCode } = require('./eosio-errors')
 const { updatePermissions } = require('./permissions')
 const { setConfig, setPhases } = require('./contract-settings')
+const { config } = require('chai')
 const prompt = require('prompt-sync')()
 
 
@@ -58,13 +59,18 @@ async function init() {
 
 }
 
-async function setParamsValue() {
+async function setParamsValue(config = false, phases = false) {
   console.log('SETTING CONTRACTS PARAMETERS\n')
-  // console.log('setting config')
-  // await setConfig()
+  if (config) {
+    console.log('setting config')
+    await setConfig()
+  }
 
-  console.log('setting phases')
-  await setPhases()
+  if (phases) {
+    console.log('setting phases')
+    await setPhases()
+  }
+
 
   console.log('setting parameters finished\n\n')
 }
@@ -86,6 +92,20 @@ async function run(contractName) {
     contract: contract.name,
     path: `./src/${contract.name}.cpp`
   })
+
+  await manageDeployment(contract)
+
+}
+
+async function deploy(contractName) {
+
+  let contract = contracts.filter(c => c.name == contractName)
+  if (contract.length > 0) {
+    contract = contract[0]
+  } else {
+    console.log('contract not found')
+    return
+  }
 
   await manageDeployment(contract)
 
@@ -159,16 +179,29 @@ async function main() {
       await run(args[1])
       break;
 
-    case 'set':
-      if (args[1] == 'params') {
-        await setParamsValue()
-
-      } else if (args[1] == 'permissions') {
-        await updatePermissions()
-
-      }
+    case 'deploy':
+      await deploy(args[1])
       break;
 
+    case 'set':
+      switch (args[1]) {
+        case 'config':
+          await setParamsValue(true, false)
+          break;
+        case 'phases':
+          await setParamsValue(false, true)
+          break;
+        case 'all':
+          await setParamsValue(true, true)
+          break;
+        case 'permissions':
+          await updatePermissions()
+          break;
+        default:
+          console.log('Invalid input.')
+          break;
+      }
+      break;
     default:
       console.log('Invalid input.')
   }
