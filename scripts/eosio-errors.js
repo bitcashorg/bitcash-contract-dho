@@ -1,4 +1,4 @@
-function assertError ({ error, textInside, message=null, throwError=true, verbose=true }) {
+function assertError({ error, textInside, message = null, throwError = true, verbose = true }) {
 
   let eosErrorMessage
   try {
@@ -22,7 +22,7 @@ function assertError ({ error, textInside, message=null, throwError=true, verbos
 
 }
 
-function accountExists (error) {
+function accountExists(error) {
   return assertError({
     error,
     textInside: 'as that name is already taken',
@@ -31,7 +31,7 @@ function accountExists (error) {
   })
 }
 
-function contractRunningSameCode (error) {
+function contractRunningSameCode(error) {
   return assertError({
     error,
     textInside: 'contract is already running this version of code',
