@@ -20,12 +20,7 @@ ACTION proposals::reset()
 {
   require_auth(get_self());
 
-  proposal_tables proposals_t(_self, _self.value);
-  auto proposal_itr = proposals_t.begin();
-  while (proposal_itr != proposals_t.end())
-  {
-    proposal_itr = proposals_t.erase(proposal_itr);
-  }
+  util::delete_table<proposal_tables>(get_self(), get_self().value);
 }
 
 ACTION proposals::create(std::map<std::string, common::types::variant_value> &args)
