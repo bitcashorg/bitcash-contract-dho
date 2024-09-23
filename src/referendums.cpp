@@ -4,8 +4,9 @@ ACTION referendums::reset()
 {
   require_auth(get_self());
 
-  util::delete_table<referendum_tables>(get_self(), get_self().value);
-
+  referendum_tables referendums_t(get_self(), get_self().value);
+  util::delete_table(referendums_t);
+  
   for (uint64_t i = 0; i < 10; i++)
   {
     util::delete_table<vote_tables>(get_self(), i);
