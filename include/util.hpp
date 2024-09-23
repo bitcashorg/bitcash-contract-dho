@@ -30,6 +30,28 @@ namespace util
     return std::get<U>(itr->value);
   }
 
+  template <eosio::name::raw TableName, typename T, typename... Indices>
+   void clear_secondary(eosio::multi_index<TableName, T, Indices...>& tb)
+   {
+      (clear_secondary_index(
+           tb.template get_index<static_cast<eosio::name::raw>(Indices::index_name)>()),
+       ...);
+   }
+
+   template <eosio::name::raw TableName, typename T, typename... Indices>
+   void clear_primary(eosio::multi_index<TableName, T, Indices...>& tb)
+   {
+      auto itr = eosio::internal_use_do_not_use::db_lowerbound_i64(
+          tb.get_code().value, tb.get_scope(), static_cast<uint64_t>(TableName), 0);
+      while (itr >= 0)
+      {
+         auto tmp = itr;
+         uint64_t primary;
+         itr = eosio::internal_use_do_not_use::db_next_i64(itr, &primary);
+         eosio::internal_use_do_not_use::db_remove_i64(tmp);
+      }
+   }
+
   template<typename T>
   inline void delete_table (const eosio::name & code, const uint64_t & scope)
   {
@@ -41,6 +63,13 @@ namespace util
     }
   }
 
+  template<typename T>
+  inline void delete_table (T&& tb)
+   {
+      clear_secondary(tb);
+      clear_primary(tb);
+   }
+   
   template<typename T>
   T get_attr (
     const std::map<std::string, common::types::variant_value> & args, 
