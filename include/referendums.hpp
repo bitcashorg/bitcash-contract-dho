@@ -19,6 +19,8 @@ public:
 
   ACTION reset();
 
+  ACTION deletevotes(const uint64_t &referendum_id);
+
   ACTION create(
       const uint64_t &referendum_id,
       const eosio::name &creator,

@@ -5,12 +5,15 @@ ACTION referendums::reset()
   require_auth(get_self());
 
   referendum_tables referendums_t(get_self(), get_self().value);
-  util::delete_table(referendums_t);
+  util::delete_table_unsafe(referendums_t);
   
-  for (uint64_t i = 0; i < 10; i++)
-  {
-    util::delete_table<vote_tables>(get_self(), i);
-  }
+}
+
+ACTION referendums::deletevotes(const uint64_t &referendum_id)
+{
+  require_auth(get_self());
+
+  util::delete_table<vote_tables>(get_self(), referendum_id);
 }
 
 ACTION referendums::create(

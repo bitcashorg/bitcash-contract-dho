@@ -8,9 +8,9 @@ const contract = (name, nameOnChain) => {
     nameOnChain,
     type: 'contract',
     stakes: {
-      cpu: '1.0000 EOS',
-      net: '1.0000 EOS',
-      ram: 1000000
+      cpu: '0.5000 EOS',
+      net: '0.5000 EOS',
+      ram: 10000
     }
   }
 }
@@ -52,7 +52,7 @@ const contractsConfig = {
 
 if (process.env.ENV_NAME === 'pre-production') {
   contractsConfig[supportedChains.eosMainnet] = [
-    contract('referendums', 'testrefendum'),
+    contract('referendums', 'testrefendu1'),
     contract('proposals', 'testproposal')
   ]
 }

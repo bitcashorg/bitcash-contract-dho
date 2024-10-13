@@ -64,7 +64,7 @@ namespace util
   }
 
   template<typename T>
-  inline void delete_table (T&& tb)
+  inline void delete_table_unsafe (T&& tb)
    {
       clear_secondary(tb);
       clear_primary(tb);
