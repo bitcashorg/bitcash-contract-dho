@@ -16,11 +16,15 @@
 
 #include "transitions/base_transition.cpp"
 
-ACTION proposals::reset()
+ACTION proposals::resetprop()
 {
   require_auth(get_self());
 
-  util::delete_table<proposal_tables>(get_self(), get_self().value);
+  proposal_tables proposals_t(get_self(), get_self().value);
+  auto pitr = proposals_t.begin();
+  while (pitr != proposals_t.end()) {
+    pitr = proposals_t.erase(pitr);
+  }
 }
 
 ACTION proposals::create(std::map<std::string, common::types::variant_value> &args)

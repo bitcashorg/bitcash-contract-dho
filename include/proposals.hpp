@@ -47,7 +47,7 @@ public:
   };
   typedef eosio::multi_index<"config"_n, config_table> config_tables;
 
-  ACTION reset();
+  ACTION resetprop();
 
   ACTION create(std::map<std::string, common::types::variant_value> & args);
 
