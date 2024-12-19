@@ -140,7 +140,7 @@ class ProposalsFactory {
     phases
   }) {
     if (!creator) {
-      creator = await createRandomAccount() 
+      creator = await createRandomAccount()
     }
 
     if (!budget) {
@@ -177,7 +177,7 @@ class ProposalsFactory {
     parent
   }) {
     if (!creator) {
-      creator = await createRandomAccount() 
+      creator = await createRandomAccount()
     }
 
     if (!budget) {
@@ -217,11 +217,11 @@ class ProposalsFactory {
     parent
   }) {
     if (!creator) {
-      creator = await createRandomAccount() 
+      creator = await createRandomAccount()
     }
 
     if (!days) {
-      
+
       days = 3
     }
 
@@ -257,7 +257,7 @@ class ProposalsFactory {
     parent
   }) {
     if (!creator) {
-      creator = await createRandomAccount() 
+      creator = await createRandomAccount()
     }
 
     if (!days) {

@@ -29,7 +29,7 @@ ACTION referendums::create(
 
   eosio::check(start_date >= now, "can not create a referendum in the past");
   eosio::check(end_date >= start_date, "end date must be greater or equal than the start date " + start_date.to_string() + " " + end_date.to_string());
-
+  eosio::check(quorum.symbol.precision() <= 18, "Asset precision must be 18 or less");
   check_day_percentage(quorum_config, std::string("quorum config"));
   check_day_percentage(majority_config, std::string("majority config"));
 
@@ -40,6 +40,7 @@ ACTION referendums::create(
     item.start_date = start_date;
     item.end_date = end_date;
     item.status = common::referendums::status_created;
+    item.quorum = quorum;
     item.quorum_config = quorum_config;
     item.majority_config = majority_config;
     item.vote_tally = {
@@ -47,6 +48,10 @@ ACTION referendums::create(
       std::make_pair(common::referendums::vote_against, eosio::asset(0, common::token_symbol)),
       std::make_pair(common::referendums::vote_abstain, eosio::asset(0, common::token_symbol))
     }; });
+  // auto refRow = referendums_t.find(referendum_id);
+  // eosio::check(refRow != referendums_t.end(), "referendum not found");
+  // eosio::check(false,"Referendum created: "+ std::to_string(refRow->quorum.symbol.precision()) + " " + refRow->quorum.symbol.code().to_string());
+
 }
 
 ACTION referendums::start(const uint64_t &referendum_id)

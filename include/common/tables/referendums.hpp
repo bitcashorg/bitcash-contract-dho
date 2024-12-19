@@ -15,7 +15,7 @@
                                                                                                                                            \
     uint64_t primary_key() const { return referendum_id; }                                                                                 \
                                                                                                                                            \
-    EOSLIB_SERIALIZE(referendum_table, (referendum_id)(creator)(start_date)(end_date)(status)(quorum_config)(majority_config)(vote_tally)) \
+    EOSLIB_SERIALIZE(referendum_table, (referendum_id)(creator)(start_date)(end_date)(status)(quorum)(quorum_config)(majority_config)(vote_tally)) \
   };                                                                                                                                       \
                                                                                                                                            \
   typedef eosio::multi_index<"referendums"_n, referendum_table> referendum_tables;

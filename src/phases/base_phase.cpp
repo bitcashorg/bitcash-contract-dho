@@ -42,7 +42,7 @@ void Phase::save_phase_start()
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
   proposal_t.modify(pitr, contract_name, [&](auto &item)
-                    {    
+                    {
     auto & p = item.phases[position];
     p.start_date = eosio::current_time_point();
     item.current_phase = item.phases[position].phase; });
@@ -54,7 +54,7 @@ void Phase::save_phase_end()
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
   proposal_t.modify(pitr, contract_name, [&](auto &item)
-                    {    
+                    {
     auto & p = item.phases[position];
     p.end_date = eosio::current_time_point();
     item.current_phase = common::proposals::phases::no_phase; });
@@ -120,23 +120,23 @@ void Phase::update_parent()
 
     for (; i < pitr->phases.size(); i++)
     {
-      switch (pitr->phases[i].phase)
+      switch (pitr->phases[i].phase.value)
       {
-      case common::proposals::phase_debate:
+      case common::proposals::phase_debate.value:
         proposal_t.modify(ppitr, contract_name, [&](auto &item)
                           {
           item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
           item.phases[i].duration_days = debate_days; });
         break;
 
-      case common::proposals::phase_debate_voting:
+      case common::proposals::phase_debate_voting.value:
         proposal_t.modify(ppitr, contract_name, [&](auto &item)
                           {
           item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
           item.phases[i].duration_days = prevote_days; });
         break;
 
-      case common::proposals::phase_voting:
+      case common::proposals::phase_voting.value:
         proposal_t.modify(ppitr, contract_name, [&](auto &item)
                           {
           item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());

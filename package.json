@@ -10,7 +10,7 @@
   "scripts": {
     "initAll": "node scripts/commands.js init",
     "initContract": "node scripts/commands.js run $1",
-    "build" : "node scripts/commands.js compile",
+    "build": "node scripts/commands.js compile",
     "test": "mocha --timeout 15000"
   },
   "author": "",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/bitcashorg/bitcash-dho-smart-contract#readme",
   "dependencies": {
+    "@greymass/eosio": "^0.7.0",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.4",
     "eosjs": "^22.1.0",

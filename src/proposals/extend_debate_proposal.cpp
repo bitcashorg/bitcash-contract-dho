@@ -39,7 +39,7 @@ void ExtendDebateProposal::update_impl(std::map<std::string, common::types::vari
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
   uint64_t days = util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days"));
-  eosio::check(days < 5, 'Proposal can not be extended more than 5 days');
+  eosio::check(days < 5, "Proposal can not be extended more than 5 days");
   // eosio::check(util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days")) < 5, 'Proposal can not be extended more than 5 days');
 
   proposals_t.modify(pitr, contract_name, [&](auto &item)
