@@ -129,11 +129,11 @@ class ProposalsFactory {
   /**
    * Create an asset string.
    * @param {number} amount - The amount in smallest units.
-   * @param {string} [code="EOS"] - The currency code.
+   * @param {string} [code="IMPACT"] - The currency code.
    * @param {number} [precision=4] - The number of decimal places.
    * @returns {string} The formatted asset string.
    */
-  static _createAsset(amount, code = "EOS", precision = 4) {
+  static _createAsset(amount, code = "IMPACT", precision = 4) {
     return `${(amount / 10 ** precision).toFixed(precision)} ${code}`
   }
 

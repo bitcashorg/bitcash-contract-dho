@@ -8,8 +8,8 @@ async function setupTestAccounts() {
 }
 
 async function setupToken() {
-  await tok("create", { issuer: "eosio.token", maximum_supply: `1000000000000.0000 EOS` })
-  await tok("issue", { to: "eosio.token", quantity: `1000000000000.0000 EOS`, memo: "" })
+  await tok("create", { issuer: "eosio.token", maximum_supply: `1000000000000.0000 IMPACT` })
+  await tok("issue", { to: "eosio.token", quantity: `1000000000000.0000 IMPACT`, memo: "" })
   // await tok("transfer", { from: "token", to: "alice", quantity: "100.0000 SYS", memo: "" })
   // await tok("transfer", { from: "token", to: "bob", quantity: "100.0000 SYS", memo: "" })
 }

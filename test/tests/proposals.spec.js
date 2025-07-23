@@ -31,8 +31,8 @@ describe("Proposal Tests", () => {
     const proposal = ProposalsFactory.createMainWithDefaults({ creator })
     const params = proposal.getActionParams()
     await expectToThrow(prop("create", params, creator), "eosio_assert: no balance object found for account alice")
-    await tok("transfer", { from: "eosio.token", to: creator, quantity: "0.0001 EOS", memo: "" })
-    await expectToThrow(prop("create", params, creator), "eosio_assert_message: the account alice has 0.0001 EOS, minimum required balance to create this proposal is 10.0000 EOS")
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: "0.0001 IMPACT", memo: "" })
+    await expectToThrow(prop("create", params, creator), "eosio_assert_message: the account alice has 0.0001 IMPACT, minimum required balance to create this proposal is 10.0000 IMPACT")
     blockchain.addTime(TimePointSec.from(60 * 60 * 24 * 30))
   })
 
