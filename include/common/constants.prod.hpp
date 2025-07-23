@@ -4,7 +4,7 @@
 
 namespace common
 {
-  const eosio::symbol token_symbol = eosio::symbol("EOS", 4);
+  const eosio::symbol token_symbol = eosio::symbol("IMPACT", 4);
   const int64_t microseconds_per_day = 86400000000;
 
   namespace contracts
