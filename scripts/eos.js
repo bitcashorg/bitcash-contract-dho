@@ -6,36 +6,50 @@ const { TextEncoder, TextDecoder } = require('util')
 const fetch = require('node-fetch')
 
 const { Api, JsonRpc } = eosjs
+const { endpoint } = require('./config')
 
 const getChainInfo = () => {
   const chainName = process.env.CHAIN_NAME
+  
+  // Use endpoint from config.js which supports environment variable overrides
+  const httpEndpoint = endpoint
+
   switch (chainName) {
     case 'local':
       return {
         keyProvider: [process.env.PRIVATE_KEY],
-        httpEndpoint: 'http://127.0.0.1:8888'
+        httpEndpoint
       }
     case 'telosTestnet':
       return {
         keyProvider: [process.env.PRIVATE_KEY],
-        httpEndpoint: 'https://testnet.telos.caleos.io'
+        httpEndpoint
       }
     case 'telosMainnet':
       return {
-        keyProvider: []
+        keyProvider: [process.env.PRIVATE_KEY],
+        httpEndpoint
+      }
+    case 'layer1':
+      return {
+        keyProvider: [process.env.PRIVATE_KEY],
+        httpEndpoint
       }
     case 'jungleTestnet':
       return {
         keyProvider: [process.env.PRIVATE_KEY],
-        httpEndpoint: 'https://jungle3.cryptolions.io/'
+        httpEndpoint
       }
     case 'eosMainnet':
       return {
         keyProvider: [process.env.PRIVATE_KEY],
-        httpEndpoint: 'https://eos.greymass.com'
+        httpEndpoint
       }
     default:
-      return null
+      return {
+        keyProvider: [process.env.PRIVATE_KEY],
+        httpEndpoint: httpEndpoint || 'http://127.0.0.1:8888'
+      }
   }
 }
 

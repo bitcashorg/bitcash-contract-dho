@@ -3,7 +3,7 @@ const { compileContract, updateConstants } = require('./compile')
 const { createAccount, deployContract } = require('./deploy')
 const { accountExists, contractRunningSameCode } = require('./eosio-errors')
 const { updatePermissions } = require('./permissions')
-const { setConfig, setPhases } = require('./contract-settings')
+const { setGlobalParameters, setPhasesConfiguration, showCurrentConfig, checkAccounts, showConfigFiles, setTestConfig, interactiveConfig, checkContractDeployment, checkTableCounts, runFullCheck, createTestProposals, createTestReferendums, createTestData } = require('./contract-settings')
 const prompt = require('prompt-sync')()
 
 
@@ -169,8 +169,91 @@ async function main() {
       }
       break;
 
+    case 'config':
+      if (args[1] == 'show') {
+        await showCurrentConfig()
+      } else if (args[1] == 'files') {
+        await showConfigFiles()
+      } else if (args[1] == 'test') {
+        await setTestConfig()
+      } else if (args[1] == 'accounts') {
+        await checkAccounts()
+      } else if (args[1] == 'interactive' || args.length == 1) {
+        await interactiveConfig()
+      } else {
+        console.log('Config options: show, files, test, accounts, interactive')
+      }
+      break;
+
+    case 'check':
+      const checkSubCommand = process.argv[3];
+      if (checkSubCommand === 'deployment') {
+        await checkContractDeployment();
+      } else if (checkSubCommand === 'config') {
+        await showCurrentConfig();
+      } else if (checkSubCommand === 'tables') {
+        await checkTableCounts();
+      } else if (checkSubCommand === 'accounts') {
+        await checkAccounts();
+      } else if (checkSubCommand === 'all') {
+        await runFullCheck();
+      } else {
+        console.log('Running full health check...');
+        await runFullCheck();
+        console.log('Check options: deployment, config, tables, accounts, all')
+      }
+      break;
+
+    case 'test':
+      const testSubCommand = process.argv[3];
+      if (testSubCommand === 'proposals') {
+        await createTestProposals();
+      } else if (testSubCommand === 'referendums') {
+        await createTestReferendums();
+      } else if (testSubCommand === 'data') {
+        await createTestData();
+      } else {
+        console.log('🧪 Test Data Creation');
+        console.log('===================');
+        console.log('Available test commands:');
+        console.log('  test proposals    - Create sample proposals for testing');
+        console.log('  test referendums  - Create sample referendums for testing');
+        console.log('  test data         - Interactive menu for creating test data');
+        console.log('\nExample: node scripts/commands.js test proposals');
+      }
+      break;
+
+    case 'help':
+      console.log('Available commands:')
+      console.log('  init                    - Deploy and configure everything')
+      console.log('  compile [contract]      - Compile all contracts or specific contract')
+      console.log('  run <contract>          - Deploy specific contract')
+      console.log('  set params              - Set parameters from JSON files')
+      console.log('  set permissions         - Update contract permissions')
+      console.log('  config [option]         - Configuration management:')
+      console.log('    config                - Interactive configuration menu')
+      console.log('    config show           - Show current blockchain configuration')
+      console.log('    config files          - Show local configuration files')
+      console.log('    config test           - Set test configuration (lower stakes)')
+      console.log('    config accounts       - Check account status')
+      console.log('    config interactive    - Interactive configuration menu')
+      console.log('  check [option]          - Contract verification and monitoring:')
+      console.log('    check                 - Full health check (deployment + config + tables)')
+      console.log('    check deployment      - Check if contracts are deployed and permissions')
+      console.log('    check config          - Show current blockchain configuration')
+      console.log('    check tables          - Check table contents and statistics')
+      console.log('    check accounts        - Check account status and resources')
+      console.log('    check all             - Full health check')
+      console.log('  test [option]           - Test data creation:')
+      console.log('    test                  - Show test data creation options')
+      console.log('    test proposals        - Create sample proposals for testing')
+      console.log('    test referendums      - Create sample referendums for testing')
+      console.log('    test data             - Interactive menu for creating test data')
+      console.log('  help                    - Show this help message')
+      break;
+
     default:
-      console.log('Invalid input.')
+      console.log('Invalid input. Use "help" to see available commands.')
   }
 
 }

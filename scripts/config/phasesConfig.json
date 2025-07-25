@@ -4,11 +4,13 @@
       "phaseName": "debate",
       "durationDays": 7,
       "type": "dialog"
-    }, {
+    },
+    {
       "phaseName": "prevote",
       "durationDays": 7,
       "type": "voting"
-    }, {
+    },
+    {
       "phaseName": "vote",
       "durationDays": 7,
       "type": "voting"
@@ -19,7 +21,8 @@
       "phaseName": "debate",
       "durationDays": 7,
       "type": "dialog"
-    }, {
+    },
+    {
       "phaseName": "vote",
       "durationDays": 7,
       "type": "voting"
@@ -29,6 +32,23 @@
     {
       "phaseName": "vote",
       "durationDays": 2,
+      "type": "voting"
+    }
+  ],
+  "extenddebate": [
+    {
+      "phaseName": "debate",
+      "durationDays": 5,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "rebuttal",
+      "durationDays": 2,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "vote",
+      "durationDays": 7,
       "type": "voting"
     }
   ]
