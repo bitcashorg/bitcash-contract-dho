@@ -27,6 +27,7 @@ bool Phase::is_ready_to_end()
 
   eosio::time_point now = eosio::current_time_point();
 
+  eosio::check(position < pitr->phases.size(), "invalid phase position");
   auto &p = pitr->phases[position];
 
   int64_t num_days = util::day_diff(p.start_date, now);
@@ -43,6 +44,7 @@ void Phase::save_phase_start()
 
   proposal_t.modify(pitr, contract_name, [&](auto &item)
                     {
+    eosio::check(position < item.phases.size(), "invalid phase position");
     auto & p = item.phases[position];
     p.start_date = eosio::current_time_point();
     item.current_phase = item.phases[position].phase; });
@@ -55,6 +57,7 @@ void Phase::save_phase_end()
 
   proposal_t.modify(pitr, contract_name, [&](auto &item)
                     {
+    eosio::check(position < item.phases.size(), "invalid phase position");
     auto & p = item.phases[position];
     p.end_date = eosio::current_time_point();
     item.current_phase = common::proposals::phases::no_phase; });
@@ -90,10 +93,23 @@ void Phase::update_parent()
 
     uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
 
+    // Find the current phase index in parent proposal
+    size_t parent_phase_index = 0;
+    bool found_phase = false;
+    for (size_t i = 0; i < ppitr->phases.size(); i++) {
+      if (ppitr->phases[i].phase == ppitr->current_phase) {
+        parent_phase_index = i;
+        found_phase = true;
+        break;
+      }
+    }
+    eosio::check(found_phase, "parent proposal current phase not found");
+
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
                       {
+      eosio::check(item.phases[parent_phase_index].duration_days + days <= 120, "phase duration cannot exceed 120 days");
       item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
-      item.phases[position].duration_days += days; });
+      item.phases[parent_phase_index].duration_days += days; });
   }
 
   if (pitr->type == common::proposals::type_shorten_debate)
@@ -103,10 +119,23 @@ void Phase::update_parent()
 
     eosio::check(ppitr->phases.size() > 0, "phases vector must contain at least one element");
 
+    // Find the current phase index in parent proposal
+    size_t parent_phase_index = 0;
+    bool found_phase = false;
+    for (size_t i = 0; i < ppitr->phases.size(); i++) {
+      if (ppitr->phases[i].phase == ppitr->current_phase) {
+        parent_phase_index = i;
+        found_phase = true;
+        break;
+      }
+    }
+    eosio::check(found_phase, "parent proposal current phase not found");
+
     proposal_t.modify(ppitr, contract_name, [&](auto &item)
                       {
+      eosio::check(item.phases[parent_phase_index].duration_days - days >= 1, "phase duration cannot be less than 1 day");
       item.awaiting.erase(std::remove(item.awaiting.begin(), item.awaiting.end(), proposal_id), item.awaiting.end());
-      item.phases[position].duration_days -= days; });
+      item.phases[parent_phase_index].duration_days -= days; });
   }
 
   if (pitr->type == common::proposals::type_change_time)
@@ -116,11 +145,9 @@ void Phase::update_parent()
     uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("prevot", 'e'));
     uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("vot", 'e'));
 
-    size_t i = 0;
-
-    for (; i < pitr->phases.size(); i++)
+    for (size_t i = 0; i < ppitr->phases.size(); i++)
     {
-      switch (pitr->phases[i].phase.value)
+      switch (ppitr->phases[i].phase.value)
       {
       case common::proposals::phase_debate.value:
         proposal_t.modify(ppitr, contract_name, [&](auto &item)

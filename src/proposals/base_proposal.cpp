@@ -21,10 +21,20 @@ void Proposal::create(std::map<std::string, common::types::variant_value> &args)
 
   eosio::name type = util::get_attr<eosio::name>(args, "type");
 
+  // Validate that the provided deadline is in the future
+  eosio::time_point supplied_deadline = util::get_attr<eosio::time_point>(args, "deadline");
+  eosio::check(supplied_deadline > eosio::current_time_point(),
+               "proposal deadline must be in the future");
+
   proposals::phases_config_tables pconfig_t(contract_name, contract_name.value);
   auto pcitr = pconfig_t.require_find(type.value, ("default phases configuration does not exist for proposal type: " + type.to_string()).c_str());
 
   uint64_t proposal_id = util::format_id(proposals_t.available_primary_key());
+
+  // Ensure that the proposal is not its own parent
+  int64_t parent_candidate = util::get_attr<int64_t>(args, "parent", int64_t(0));
+  eosio::check(parent_candidate == 0 || parent_candidate != int64_t(proposal_id),
+              "proposal parent cannot be the proposal itself");
 
   proposals_t.emplace(contract_name, [&](auto &item)
                       {
@@ -91,8 +101,8 @@ void Proposal::move(std::map<std::string, common::types::variant_value> &args)
 {
   int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
 
-  Transition *transition = new Transition(m_contract);
-  transition->execute(proposal_id);
+  Transition transition(m_contract);
+  transition.execute(proposal_id);
 }
 
 void Proposal::create_impl(std::map<std::string, common::types::variant_value> &args) {}

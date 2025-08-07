@@ -1,4 +1,4 @@
-#include <phases/voting_phase.hpp>
+#include "/phases/voting_phase.hpp"
 
 void VotingPhase::start_impl()
 {
@@ -11,7 +11,8 @@ void VotingPhase::start_impl()
   // check if we are waiting for another proposal
   if (ppitr != proposal_t.end())
   {
-    eosio::check(ppitr->awaiting.size() != 0, "Can not start voting, we are waiting another proposal!");
+    eosio::check(ppitr->awaiting.size() == 0,
+             "Can not start voting, we are waiting another proposal!");
   }
 
   uint64_t total_days = 0;
@@ -60,6 +61,7 @@ void VotingPhase::start_impl()
     break;
   }
 
+  eosio::check(position < pitr->phases.size(), "invalid phase position");
   auto phase = pitr->phases[position];
 
   proposals::referendum_tables referendums_t(common::contracts::referendums, common::contracts::referendums.value);
@@ -71,23 +73,31 @@ void VotingPhase::start_impl()
                     { item.special_attributes.insert(std::make_pair(get_referendum_key(phase.phase), int64_t(referendum_id))); });
 
   int64_t duration_days = (phase.duration_days != common::proposals::phases::undefined_duration_days) ? phase.duration_days : 10;
-  int64_t end_timestamp = phase.start_date.time_since_epoch().count() + (duration_days * common::microseconds_per_day);
+  
+  // Check for overflow in timestamp arithmetic
+  int64_t start_time = phase.start_date.time_since_epoch().count();
+  int64_t duration_microseconds = duration_days * common::microseconds_per_day;
+  
+  // Prevent overflow: check if start_time + duration would overflow
+  eosio::check(start_time <= (INT64_MAX - duration_microseconds), "timestamp calculation would overflow");
+  
+  int64_t end_timestamp = start_time + duration_microseconds;
   eosio::check(end_timestamp > eosio::current_time_point().time_since_epoch().count(), "can not start voting, the phase has already ended");
   eosio::name scope = pitr->type;
   eosio::asset quorum = util::get_setting<proposals::config_tables, eosio::asset>(contract_name, scope, common::settings::quorum);
 
   std::vector<common::types::day_percentage> quorum_config = {
-      common::types::factory::create_day_percentage_entry(0, quorum.amount),
-      // common::types::factory::create_day_percentage_entry(5, 40)
+      common::types::factory::create_day_percentage_entry(0, 0)
   };
 
   std::vector<common::types::day_percentage> majority_config = {
-      common::types::factory::create_day_percentage_entry(0, threshold),
+      // Convert percentage (e.g. 50..90) to basis points (5000..9000)
+      common::types::factory::create_day_percentage_entry(0, uint16_t(threshold * 100)),
       // common::types::factory::create_day_percentage_entry(5, 40)
   };
 
   eosio::action(
-      eosio::permission_level(common::contracts::referendums, "active"_n),
+      eosio::permission_level(contract_name, "active"_n),
       common::contracts::referendums,
       eosio::name("create"),
       std::make_tuple(
@@ -101,7 +111,7 @@ void VotingPhase::start_impl()
       .send();
 
   eosio::action(
-      eosio::permission_level(common::contracts::referendums, "active"_n),
+      eosio::permission_level(contract_name, "active"_n),
       common::contracts::referendums,
       eosio::name("start"),
       std::make_tuple(referendum_id))
@@ -113,6 +123,7 @@ void VotingPhase::end_impl()
   proposals::proposal_tables proposal_t(contract_name, contract_name.value);
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
+  eosio::check(position < pitr->phases.size(), "invalid phase position");
   auto phase = pitr->phases[position];
   uint64_t referendum_id = util::get_attr<int64_t>(pitr->special_attributes, get_referendum_key(phase.phase));
 
@@ -138,9 +149,38 @@ void VotingPhase::end_impl()
       remove_awaiting_from_parent();
     }
   }
+  else if (ritr->status == common::referendums::status_started)
+  {
+    // Check if referendum has expired
+    eosio::time_point now = eosio::current_time_point();
+    if (now >= ritr->end_date) {
+      // Auto-finish expired referendum
+      eosio::action(
+          eosio::permission_level(contract_name, "active"_n),
+          common::contracts::referendums,
+          eosio::name("finish"),
+          std::make_tuple(referendum_id))
+          .send();
+      
+      // Re-load referendum and set proposal status based on outcome
+      ritr = referendums_t.require_find(referendum_id, "referendum not found");
+      if (ritr->status == common::referendums::status_accepted) {
+        if (position + 1 == pitr->phases.size()) {
+          change_proposal_status(common::proposals::status_accepted);
+          if (pitr->type != common::proposals::type_main) {
+            update_parent();
+          }
+        }
+      } else {
+        change_proposal_status(common::proposals::status_rejected);
+      }
+    } else {
+      eosio::check(false, "proposal can not end, the associated referendum is still in progress");
+    }
+  }
   else
   {
-    eosio::check(false, "proposal can not end, the associated referendum is still in progress");
+    eosio::check(false, "unexpected referendum status: " + ritr->status.to_string());
   }
 
   save_phase_end();

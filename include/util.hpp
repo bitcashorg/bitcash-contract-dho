@@ -3,6 +3,7 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
 #include <common/data_types.hpp>
+#include <optional>
 
 namespace util 
 {
@@ -31,13 +32,21 @@ namespace util
   }
 
   template<typename T>
-  inline void delete_table (const eosio::name & code, const uint64_t & scope)
+  inline void delete_table (
+    const eosio::name & code,
+    const uint64_t & scope,
+    std::optional<std::size_t> max_rows = std::nullopt,
+    const std::string & error_message = "no table found for code "
+  )
   {
+    /* Delete up to `max_rows` rows; if no limit is provided, delete all rows. */
     T table(code, scope);
     auto itr = table.begin();
-    while (itr != table.end())
+    std::size_t count = 0;
+    while (itr != table.end() && (!max_rows.has_value() || count < *max_rows))
     {
-      itr = table.erase(itr);
+        itr = table.erase(itr);
+        ++count;
     }
   }
 

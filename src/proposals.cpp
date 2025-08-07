@@ -70,7 +70,11 @@ ACTION proposals::move(const uint64_t &proposal_id)
   proposal_tables proposals_t(get_self(), get_self().value);
   auto pitr = proposals_t.require_find(proposal_id, "proposal not found");
 
-  require_auth(has_auth(pitr->creator) ? pitr->creator : _self);
+  if (has_auth(pitr->creator)) {
+      require_auth(pitr->creator);
+  } else {
+      require_auth(_self);
+  }
 
   std::unique_ptr<Proposal> prop = std::unique_ptr<Proposal>(ProposalsFactory::Factory(*this, pitr->type));
 

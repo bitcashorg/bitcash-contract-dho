@@ -32,6 +32,8 @@ namespace common
     constexpr eosio::name vote_favour = "yes"_n;
     constexpr eosio::name vote_against = "no"_n;
     constexpr eosio::name vote_abstain = "abstain"_n;
+    
+    constexpr uint32_t default_vote_weight = 10000;  // Standard 100% voting weight
   }
 
   namespace proposals

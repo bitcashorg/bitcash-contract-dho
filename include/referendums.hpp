@@ -38,6 +38,12 @@ public:
 
   ACTION vote(const uint64_t &referendum_id, const eosio::name &voter, const eosio::name &option);
 
+  ACTION clearvote(const uint64_t &referendum_id, const eosio::name &voter);
+
+  ACTION cleanupref(const uint64_t &referendum_id);
+
+  ACTION cleanupold(const uint32_t &days_old);
+
 private:
   void check_day_percentage(std::vector<common::types::day_percentage> & day_per, const std::string &category);
   uint16_t get_current_percentage(const std::vector<common::types::day_percentage> &day_per, const eosio::time_point &start_day, const eosio::time_point &cutoff);
@@ -52,11 +58,16 @@ private:
   TABLE vote_table
   { // scoped by referendum_id
     eosio::name voter;
-    eosio::asset amount;
+    eosio::asset amount;   // Keep full asset for multi-token flexibility
     eosio::name option;
     uint32_t weight;
 
     uint64_t primary_key() const { return voter.value; }
+    uint64_t by_option() const { return option.value; }
+
+    EOSLIB_SERIALIZE(vote_table, (voter)(amount)(option)(weight))
   };
-  typedef eosio::multi_index<"votes"_n, vote_table> vote_tables;
+  typedef eosio::multi_index<"votes"_n, vote_table,
+    indexed_by<"byoption"_n, const_mem_fun<vote_table, uint64_t, &vote_table::by_option>>
+  > vote_tables;
 };

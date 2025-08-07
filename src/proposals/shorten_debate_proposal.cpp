@@ -17,8 +17,11 @@ void ShortenDebateProposal::create_impl (std::map<std::string, common::types::va
 
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
+  int64_t days = util::get_attr<int64_t>(args, "days");
+  eosio::check(days >= 1 && days <= 30, "shortening days must be between 1 and 30");
+
   proposals_t.modify(pitr, contract_name, [&](auto & item){
-    item.special_attributes.insert(std::make_pair("days", util::get_attr<int64_t>(args, "days")));
+    item.special_attributes.insert(std::make_pair("days", days));
   });
 
 }
@@ -34,12 +37,19 @@ void ShortenDebateProposal::update_impl (std::map<std::string, common::types::va
 
   eosio::check(ppitr != proposals_t.end(), "Shorten debate proposal must have an existing proposal parent");
 
-  eosio::check(ppitr->status == common::proposals::phase_debate, "Shorten debate proposal can be only created when main proposal is on debate phase");
+  eosio::check(ppitr->current_phase == common::proposals::phase_debate, "Shorten debate proposal can be updated only when main proposal is on debate phase");
 
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
+  auto days_itr = pitr->special_attributes.find("days");
+  eosio::check(days_itr != pitr->special_attributes.end(), "days attribute not found");
+  uint64_t current_days = std::get<int64_t>(days_itr->second);
+  uint64_t days = util::get_attr<int64_t>(args, "days", current_days);
+
   proposals_t.modify(pitr, contract_name, [&](auto & item){
-    item.special_attributes.at("days") = util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days"));
+    auto days_attr_itr = item.special_attributes.find("days");
+    eosio::check(days_attr_itr != item.special_attributes.end(), "days attribute not found");
+    days_attr_itr->second = common::types::variant_value(int64_t(days));
   });
 
 }
