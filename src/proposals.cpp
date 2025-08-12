@@ -92,6 +92,8 @@ ACTION proposals::setpconfig(const eosio::name &proposal_type, std::vector<commo
   std::vector<common::types::phase> phases;
   for (auto &default_phase : default_phases)
   {
+    eosio::check(default_phase.duration_days > 0 && default_phase.duration_days <= 120,
+                 (std::string("invalid duration_days for ") + default_phase.phase_name.to_string()).c_str());
     phases.push_back(common::types::factory::create_phase_entry(
         default_phase.phase_name,
         default_phase.duration_days,
@@ -130,5 +132,18 @@ ACTION proposals::setgparam(const eosio::name &scope, const eosio::name &setting
   {
     config_t.modify(citr, _self, [&](auto &item)
                     { item.value = value; });
+  }
+}
+
+ACTION proposals::cleanupprops(const uint32_t &max_rows)
+{
+  require_auth(get_self());
+
+  proposals::proposal_tables proposals_t(get_self(), get_self().value);
+  uint32_t deleted = 0;
+  auto itr = proposals_t.begin();
+  while (itr != proposals_t.end() && deleted < max_rows) {
+    itr = proposals_t.erase(itr);
+    ++deleted;
   }
 }

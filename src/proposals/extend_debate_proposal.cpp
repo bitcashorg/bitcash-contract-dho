@@ -41,8 +41,8 @@ void ExtendDebateProposal::update_impl(std::map<std::string, common::types::vari
 
   auto days_itr = pitr->special_attributes.find("days");
   eosio::check(days_itr != pitr->special_attributes.end(), "days attribute not found");
-  uint64_t current_days = std::get<int64_t>(days_itr->second);
-  uint64_t days = util::get_attr<int64_t>(args, "days", current_days);
+  int64_t current_days = std::get<int64_t>(days_itr->second);
+  int64_t days = util::get_attr<int64_t>(args, "days", current_days);
   eosio::check(days < 5, "Proposal can not be extended more than 5 days");
   // eosio::check(util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days")) < 5, 'Proposal can not be extended more than 5 days');
 

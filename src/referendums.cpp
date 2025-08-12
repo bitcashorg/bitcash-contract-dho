@@ -21,6 +21,30 @@ ACTION referendums::reset()
   }
 }
 
+ACTION referendums::cleanupvotes(const uint64_t &referendum_id, const uint32_t &max_rows)
+{
+  require_auth(get_self());
+  vote_tables votes_t(get_self(), referendum_id);
+  uint32_t deleted = 0;
+  auto itr = votes_t.begin();
+  while (itr != votes_t.end() && deleted < max_rows) {
+    itr = votes_t.erase(itr);
+    ++deleted;
+  }
+}
+
+ACTION referendums::cleanuprefs(const uint32_t &max_rows)
+{
+  require_auth(get_self());
+  referendum_tables referendums_t(get_self(), get_self().value);
+  uint32_t deleted = 0;
+  auto itr = referendums_t.begin();
+  while (itr != referendums_t.end() && deleted < max_rows) {
+    itr = referendums_t.erase(itr);
+    ++deleted;
+  }
+}
+
 ACTION referendums::create(
     const uint64_t &referendum_id,
     const eosio::name &creator,
@@ -146,9 +170,29 @@ ACTION referendums::finish(const uint64_t &referendum_id)
   eosio::check(ritr->status == common::referendums::status_started,
                "can not hold referendum, it is not in " + common::referendums::status_started.to_string() + " status");
 
-  eosio::asset favour = ritr->votes_favour;
-  eosio::asset against = ritr->votes_against;
-  eosio::asset abstain = ritr->votes_abstain;
+  // Re-tally votes at finish time based on current token balances of voters
+  eosio::asset tally_favour = eosio::asset(0, common::token_symbol);
+  eosio::asset tally_against = eosio::asset(0, common::token_symbol);
+  eosio::asset tally_abstain = eosio::asset(0, common::token_symbol);
+
+  vote_tables votes_t(get_self(), referendum_id);
+  for (auto vitr = votes_t.begin(); vitr != votes_t.end(); ++vitr) {
+    // Read current balance from token contract accounts table scoped by voter
+    token_account_tables token_accts_t(common::contracts::bank_token, vitr->voter.value);
+    auto bal_itr = token_accts_t.find(common::token_symbol.code().raw());
+    eosio::asset current_balance = eosio::asset(0, common::token_symbol);
+    if (bal_itr != token_accts_t.end()) {
+      current_balance = bal_itr->balance;
+    }
+
+    if (vitr->option == common::referendums::vote_favour) {
+      tally_favour += current_balance;
+    } else if (vitr->option == common::referendums::vote_against) {
+      tally_against += current_balance;
+    } else if (vitr->option == common::referendums::vote_abstain) {
+      tally_abstain += current_balance;
+    }
+  }
 
   // ========================================================= //
   // eosio::check THE TOKEN SUPPLY, WE MIGHT HAVE TO ADDAPT THIS FOR THE TOKEN CONTRACT WHEN IT IS READY
@@ -166,10 +210,10 @@ ACTION referendums::finish(const uint64_t &referendum_id)
   // bool quorum_passed = current_quorum_percentage >= quorum_threshold_percentage;
 
   // Check for overflow in quorum calculation before adding vote amounts
-  eosio::check(favour.amount <= (INT64_MAX - against.amount), "vote amounts too large for quorum calculation");
-  eosio::check((favour.amount + against.amount) <= (INT64_MAX - abstain.amount), "vote amounts too large for quorum calculation");
+  eosio::check(tally_favour.amount <= (INT64_MAX - tally_against.amount), "vote amounts too large for quorum calculation");
+  eosio::check((tally_favour.amount + tally_against.amount) <= (INT64_MAX - tally_abstain.amount), "vote amounts too large for quorum calculation");
   
-  bool quorum_passed = (favour.amount + against.amount + abstain.amount) >= ritr->quorum.amount;
+  bool quorum_passed = (tally_favour.amount + tally_against.amount + tally_abstain.amount) >= ritr->quorum.amount;
 
   int64_t majority_threshold_percentage = int64_t(get_current_percentage(ritr->majority_config, ritr->start_date, now));
 
@@ -177,11 +221,11 @@ ACTION referendums::finish(const uint64_t &referendum_id)
   bool majority_passed = false;
   
   // Calculate majority based on favour vs against votes (abstain votes don't count for majority)
-  int64_t denom = favour.amount + against.amount;
+  int64_t denom = tally_favour.amount + tally_against.amount;
   if (denom > 0) {
       // Prevent overflow: check if favour.amount * 10000 would overflow
-      eosio::check(favour.amount <= (INT64_MAX / 10000), "vote amount too large for percentage calculation");
-      current_majority_percentage = (favour.amount * 10000) / denom;
+      eosio::check(tally_favour.amount <= (INT64_MAX / 10000), "vote amount too large for percentage calculation");
+      current_majority_percentage = (tally_favour.amount * 10000) / denom;
       majority_passed = current_majority_percentage >= majority_threshold_percentage;
   } else {
       // If only abstain votes, referendum fails (no clear majority decision)
@@ -189,7 +233,13 @@ ACTION referendums::finish(const uint64_t &referendum_id)
   }
 
   referendums_t.modify(ritr, _self, [&](auto &item)
-                       { item.status = (quorum_passed && majority_passed) ? common::referendums::status_accepted : common::referendums::status_rejected; });
+                       { 
+                         // Persist the re-tallied results for transparency
+                         item.votes_favour = tally_favour;
+                         item.votes_against = tally_against;
+                         item.votes_abstain = tally_abstain;
+                         item.status = (quorum_passed && majority_passed) ? common::referendums::status_accepted : common::referendums::status_rejected; 
+                       });
 }
 
 ACTION referendums::vote(const uint64_t &referendum_id, const eosio::name &voter, const eosio::name &option)

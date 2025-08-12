@@ -63,11 +63,13 @@ namespace util
     {
       if (default_value.has_value())
       {
+        eosio::check(std::holds_alternative<T>(*default_value), ("attribute " + attribute + " type mismatch").c_str());
         return std::get<T>(default_value.value());
       }
-      eosio::check(false, "required attribute: " + attribute + " not found");
+      eosio::check(false, ("required attribute: " + attribute + " not found").c_str());
     }
 
+    eosio::check(std::holds_alternative<T>(itr->second), ("attribute " + attribute + " type mismatch").c_str());
     return std::get<T>(itr->second);
   }
 

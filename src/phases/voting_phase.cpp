@@ -1,4 +1,4 @@
-#include "/phases/voting_phase.hpp"
+#include <phases/voting_phase.hpp>
 
 void VotingPhase::start_impl()
 {

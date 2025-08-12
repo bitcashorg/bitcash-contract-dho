@@ -17,6 +17,13 @@ bool Phase::is_ready_to_start()
   proposals::proposal_tables proposal_t(contract_name, contract_name.value);
   auto pitr = proposal_t.require_find(proposal_id, "proposal not found");
 
+  // Enforce creator stake at phase start
+  eosio::asset min_stake = util::get_setting<proposals::config_tables, eosio::asset>(
+      contract_name, pitr->type, common::settings::min_stake);
+  eosio::asset creator_balance = util::get_account_balance<proposals::token_account_tables>(
+      common::contracts::bank_token, pitr->creator, common::token_symbol);
+  eosio::check(creator_balance >= min_stake, "creator balance below min stake");
+
   return pitr->status == common::proposals::status_open;
 }
 
@@ -91,7 +98,7 @@ void Phase::update_parent()
   if (pitr->type == common::proposals::type_extend_debate)
   {
 
-    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
+    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, std::string("days"));
 
     // Find the current phase index in parent proposal
     size_t parent_phase_index = 0;
@@ -115,7 +122,7 @@ void Phase::update_parent()
   if (pitr->type == common::proposals::type_shorten_debate)
   {
 
-    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("day", 's'));
+    uint64_t days = util::get_attr<int64_t>(pitr->special_attributes, std::string("days"));
 
     eosio::check(ppitr->phases.size() > 0, "phases vector must contain at least one element");
 
@@ -141,9 +148,9 @@ void Phase::update_parent()
   if (pitr->type == common::proposals::type_change_time)
   {
 
-    uint64_t debate_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("debat", 'e'));
-    uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("prevot", 'e'));
-    uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, util::to_str("vot", 'e'));
+    uint64_t debate_days = util::get_attr<int64_t>(pitr->special_attributes, std::string("debate"));
+    uint64_t prevote_days = util::get_attr<int64_t>(pitr->special_attributes, std::string("prevote"));
+    uint64_t vote_days = util::get_attr<int64_t>(pitr->special_attributes, std::string("voting"));
 
     for (size_t i = 0; i < ppitr->phases.size(); i++)
     {

@@ -16,7 +16,7 @@
       "type": "voting"
     },
     {
-      "phaseName": "vote",
+      "phaseName": "voting",
       "durationDays": 7,
       "type": "voting"
     }
@@ -28,21 +28,31 @@
       "type": "dialog"
     },
     {
-      "phaseName": "vote",
+      "phaseName": "voting",
       "durationDays": 7,
       "type": "voting"
     }
   ],
   "changetime": [
     {
-      "phaseName": "vote",
+      "phaseName": "debate",
+      "durationDays": 1,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "voting",
       "durationDays": 2,
       "type": "voting"
     }
   ],
   "extenddebate": [
     {
-      "phaseName": "vote",
+      "phaseName": "debate",
+      "durationDays": 1,
+      "type": "dialog"
+    },
+    {
+      "phaseName": "voting",
       "durationDays": 3,
       "type": "voting"
     }
@@ -54,7 +64,7 @@
       "type": "dialog"
     },
     {
-      "phaseName": "vote",
+      "phaseName": "voting",
       "durationDays": 3,
       "type": "voting"
     }

@@ -32,7 +32,11 @@ void Proposal::create(std::map<std::string, common::types::variant_value> &args)
   uint64_t proposal_id = util::format_id(proposals_t.available_primary_key());
 
   // Ensure that the proposal is not its own parent
-  int64_t parent_candidate = util::get_attr<int64_t>(args, "parent", int64_t(0));
+  int64_t parent_candidate = util::get_attr<int64_t>(
+    args,
+    "parent",
+    std::optional<common::types::variant_value>(int64_t(0))
+  );
   eosio::check(parent_candidate == 0 || parent_candidate != int64_t(proposal_id),
               "proposal parent cannot be the proposal itself");
 
@@ -51,9 +55,21 @@ void Proposal::create(std::map<std::string, common::types::variant_value> &args)
         item.current_phase = default_phase.phase;
       }
       item.phases.push_back(common::types::factory::create_phase_entry(
-        util::get_attr<eosio::name>(args, util::to_str("phase_", default_phase.phase, "_name"), default_phase.phase),
-        int16_t(util::get_attr<int64_t>(args, util::to_str("phase_", default_phase.phase, "_duration_days"), int64_t(default_phase.duration_days))),
-        util::get_attr<eosio::name>(args, util::to_str("phase_", default_phase.phase, "_type"), default_phase.type),
+        util::get_attr<eosio::name>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_name"),
+          std::optional<common::types::variant_value>(default_phase.phase)
+        ),
+        int16_t(util::get_attr<int64_t>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_duration_days"),
+          std::optional<common::types::variant_value>(int64_t(default_phase.duration_days))
+        )),
+        util::get_attr<eosio::name>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_type"),
+          std::optional<common::types::variant_value>(default_phase.type)
+        ),
         first_phase ? eosio::current_time_point() : eosio::time_point(eosio::microseconds(0))
       ));
       first_phase = false;
@@ -76,8 +92,21 @@ void Proposal::update(std::map<std::string, common::types::variant_value> &args)
       pitr->current_phase == common::proposals::phase_discussion,
       util::to_str("can not modify proposal, it is not in ", common::proposals::phase_discussion, " phase"));
 
+  // If a new deadline is provided in args, validate it is in the future
+  auto deadlineArgIt = args.find("deadline");
+  if (deadlineArgIt != args.end())
+  {
+    eosio::time_point supplied_deadline = std::get<eosio::time_point>(deadlineArgIt->second);
+    eosio::check(supplied_deadline > eosio::current_time_point(),
+                 "proposal deadline must be in the future");
+  }
+
   proposals_t.modify(pitr, contract_name, [&](auto &item)
-                     { item.deadline = util::get_attr<eosio::time_point>(args, "deadline", pitr->deadline); });
+                     { item.deadline = util::get_attr<eosio::time_point>(
+                         args,
+                         "deadline",
+                         std::optional<common::types::variant_value>(pitr->deadline)
+                       ); });
 
   update_impl(args);
 }

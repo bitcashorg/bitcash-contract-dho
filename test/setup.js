@@ -5,6 +5,8 @@ import { Name } from "@greymass/eosio"
 async function setupTestAccounts() {
   blockchain.createAccount("alice")
   blockchain.createAccount("bob")
+  blockchain.createAccount("carol")
+  blockchain.createAccount("dave")
 }
 
 async function setupToken() {

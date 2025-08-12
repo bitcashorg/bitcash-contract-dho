@@ -44,6 +44,10 @@ public:
 
   ACTION cleanupold(const uint32_t &days_old);
 
+  // Batched cleanup for votes and referendums
+  ACTION cleanupvotes(const uint64_t &referendum_id, const uint32_t &max_rows);
+  ACTION cleanuprefs(const uint32_t &max_rows);
+
 private:
   void check_day_percentage(std::vector<common::types::day_percentage> & day_per, const std::string &category);
   uint16_t get_current_percentage(const std::vector<common::types::day_percentage> &day_per, const eosio::time_point &start_day, const eosio::time_point &cutoff);
@@ -68,6 +72,7 @@ private:
     EOSLIB_SERIALIZE(vote_table, (voter)(amount)(option)(weight))
   };
   typedef eosio::multi_index<"votes"_n, vote_table,
-    indexed_by<"byoption"_n, const_mem_fun<vote_table, uint64_t, &vote_table::by_option>>
+    eosio::indexed_by<"byoption"_n, eosio::const_mem_fun<vote_table, uint64_t, &vote_table::by_option>>
   > vote_tables;
+
 };
