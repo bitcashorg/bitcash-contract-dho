@@ -96,6 +96,9 @@ void Proposal::update(std::map<std::string, common::types::variant_value> &args)
   auto deadlineArgIt = args.find("deadline");
   if (deadlineArgIt != args.end())
   {
+    // Harden type safety: surface a clear error instead of aborting on std::get mismatch
+    eosio::check(std::holds_alternative<eosio::time_point>(deadlineArgIt->second),
+                 "attribute deadline type mismatch");
     eosio::time_point supplied_deadline = std::get<eosio::time_point>(deadlineArgIt->second);
     eosio::check(supplied_deadline > eosio::current_time_point(),
                  "proposal deadline must be in the future");
