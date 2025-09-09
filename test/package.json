@@ -6,7 +6,11 @@
   "type": "module",
   "module": "esnext",
   "scripts": {
-    "test": "mocha ./tests/**/*.spec.js"
+    "test": "mocha --reporter ./reporters/summary.cjs ./tests/**/*.spec.js",
+    "test:copy": "mocha --reporter ./reporters/summary.cjs ./tests/**/*.spec.js | pbcopy && echo 'Copied tests summary to clipboard.'",
+    "test:save": "mocha --reporter ./reporters/summary.cjs ./tests/**/*.spec.js > ../TESTS_SUMMARY.txt && echo 'Saved summary to ../TESTS_SUMMARY.txt'",
+    "test-referendums": "mocha ./tests/referendums.retally.spec.js",
+    "test-proposals": "mocha ./tests/proposals.spec.js"
   },
   "devDependencies": {
     "@eosnetwork/vert": "^1.0.0",

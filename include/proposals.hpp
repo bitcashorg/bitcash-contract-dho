@@ -60,4 +60,7 @@ public:
   ACTION setpconfig(const eosio::name &type, std::vector<common::types::phase_config> &default_phases);
 
   ACTION setgparam(const eosio::name &scope, const eosio::name &setting, common::types::variant_value &value);
+
+  // Batched cleanup: delete up to max_rows proposals per call
+  ACTION cleanupprops(const uint32_t &max_rows);
 };

@@ -29,7 +29,8 @@ void AmendmentProposal::update_impl(std::map<std::string, common::types::variant
 
   eosio::check(ppitr != proposals_t.end(), "Amendment proposal must have an existing proposal parent");
 
-  eosio::check(ppitr->status == common::proposals::phase_debate, "Amendment proposal can be only created when main proposal is on debate phase");
+  eosio::check(ppitr->current_phase == common::proposals::phase_debate,
+    "Amendment proposal can only be updated when the main proposal is in the debate phase");
 }
 
 void AmendmentProposal::cancel_impl(std::map<std::string, common::types::variant_value> &args)

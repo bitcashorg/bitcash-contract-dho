@@ -1,44 +1,68 @@
 {
   "main": {
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "quorum": [
+      "asset",
+      "10000.0000 IMPACT"
+    ],
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ]
   },
-
   "amendment": {
     "minstake": [
-      "asset", "1.0000 MOCKEOS"
+      "asset",
+      "1.0000 IMPACT"
     ],
     "votethresh": [
-      "int", 15
+      "int",
+      15
     ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "quorum": [
+      "asset",
+      "10000.0000 IMPACT"
+    ]
   },
-
   "changetime": {
     "minstake": [
-      "asset", "1.0000 MOCKEOS"
+      "asset",
+      "1.0000 IMPACT"
     ],
     "votethresh": [
-      "int", 15
+      "int",
+      15
     ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "quorum": [
+      "asset",
+      "10000.0000 IMPACT"
+    ]
   },
-
   "extenddebate": {
     "minstake": [
-      "asset", "10.0000 MOCKEOS"
+      "asset",
+      "10.0000 IMPACT"
     ],
     "votethresh": [
-      "int", 15
+      "int",
+      15
     ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "quorum": [
+      "asset",
+      "10000.0000 IMPACT"
+    ]
   },
   "shortndebate": {
     "minstake": [
-      "asset", "10.0000 MOCKEOS"
+      "asset",
+      "10.0000 IMPACT"
     ],
     "votethresh": [
-      "int", 15
+      "int",
+      15
     ],
-    "quorum": ["asset", "10,000.0000 MOCKEOS"]
+    "quorum": [
+      "asset",
+      "10000.0000 IMPACT"
+    ]
   }
 }

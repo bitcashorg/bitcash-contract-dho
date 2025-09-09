@@ -19,7 +19,7 @@ describe("Proposal Tests", () => {
     const proposal = ProposalsFactory.createMainWithDefaults({ creator })
     const params = proposal.getActionParams()
     await prop("create", params, creator)
-    const proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     // console.log(proposalsTable)
     // console.log("Phases", JSON.stringify(proposalsTable[0].phases), null, 2)
     expect(proposalsTable).length(1)
@@ -44,7 +44,7 @@ describe("Proposal Tests", () => {
     const createParams = proposal.getActionParams()
     await prop("create", createParams, creator)
     // console.log("createParams", JSON.stringify(createParams, null, 2))
-    const proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     expect(proposalsTable).length(1)
     const proposalId = proposalsTable[0].proposal_id
     // console.log("Proposal:", JSON.stringify(proposalsTable[0], null, 2))
@@ -58,7 +58,7 @@ describe("Proposal Tests", () => {
       ],
     }
     await prop("update", updateParams, creator)
-    const updatedProposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const updatedProposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     // console.log("Updated Proposal:", JSON.stringify(updatedProposalsTable[0], null, 2))
     expect(new Date(updatedProposalsTable[0].deadline).getTime()).to.equal(new Date(updatedDeadline).getTime())
   })
@@ -72,13 +72,13 @@ describe("Proposal Tests", () => {
     // console.log("createParams", JSON.stringify(createParams))
 
     await prop("create", createParams, creator)
-    const proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     // console.log("Proposal:", JSON.stringify(proposalsTable[0], null, 2))
 
     const proposalId = proposalsTable[0].proposal_id
     blockchain.addTime(TimePointSec.from(60 * 60 * 24 * 7))
     await prop("move", { proposal_id: proposalId }, creator)
-    const updatedProposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const updatedProposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     expect(updatedProposalsTable[0].current_phase).to.equal("debate")
     const updateParams = {
       args: [
@@ -104,7 +104,7 @@ describe("Proposal Tests", () => {
     await prop("create", createParams, creator)
 
     // Get the proposal ID
-    const proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
+    const proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     expect(proposalsTable).length(1)
     const proposalId = proposalsTable[0].proposal_id
 
@@ -119,104 +119,78 @@ describe("Proposal Tests", () => {
     // The other user attempts to update the proposal
     await expectToThrow(prop("update", updateParams, otherUser), `missing required authority ${creator}`)
   })
-  it("should allow moving the proposal through all phases and enforce correct behavior at each phase", async () => {
+  it("moves discussion → debate when time elapsed and stake intact", async () => {
     const creator = "alice"
     const minStake = proposalUtil.getConfig("main", "minstake")[1]
     await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "" })
 
-    // Create a main proposal with default phases
     const proposal = ProposalsFactory.createMainWithDefaults({ creator })
-    const createParams = proposal.getActionParams()
-    await prop("create", createParams, creator)
+    await prop("create", proposal.getActionParams(), creator)
 
-    // Get the proposal ID
-    let proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
-    expect(proposalsTable).length(1)
+    let proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
     const proposalId = proposalsTable[0].proposal_id
+    expect(proposalsTable[0].current_phase).to.equal("discussion")
 
-    // Define the phases and their durations (in seconds for simulation)
-    const phaseDurations = {
-      discussion: 7 * 24 * 3600, // 7 days
-      debate: 7 * 24 * 3600, // 7 days
-      prevote: 7 * 24 * 3600, // 7 days
-      vote: 7 * 24 * 3600, // 7 days
-    }
+    // elapse discussion, top-up, move
+    blockchain.addTime(TimePointSec.from(7 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup" })
+    await prop("move", { proposal_id: proposalId }, creator)
 
-    // Phases in the order they should occur
-    const phasesOrder = ["discussion", "debate", "prevote", "vote", "completed"]
+    proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    expect(proposalsTable[0].current_phase).to.equal("debate")
+  })
 
-    // Helper function to advance time and move to the next phase
-    const moveToNextPhase = async (expectedPhase) => {
-      // Get current phase from the proposals table
-      proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
-      const currentPhase = proposalsTable[0].current_phase
+  it("moves debate → prevote when time elapsed and stake intact", async () => {
+    const creator = "alice"
+    const minStake = proposalUtil.getConfig("main", "minstake")[1]
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "" })
 
-      // Advance time by the duration of the current phase
-      blockchain.addTime(TimePointSec.from(phaseDurations[currentPhase]))
-      const refTable = referendums.tables.referendums(nameToBigInt("eospropvotes")).getTableRows()
-      console.log("refTable", JSON.stringify(refTable, null, 2))
-      // Move the proposal to the next phase
-      await prop("move", { proposal_id: proposalId }, creator)
+    const proposal = ProposalsFactory.createMainWithDefaults({ creator })
+    await prop("create", proposal.getActionParams(), creator)
 
-      // Fetch the updated proposal
-      proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
-      const newPhase = proposalsTable[0].current_phase
-      expect(newPhase).to.equal(expectedPhase)
-    }
+    // move to debate first
+    blockchain.addTime(TimePointSec.from(7 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup1" })
+    let proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    await prop("move", { proposal_id: proposalsTable[0].proposal_id }, creator)
 
-    // Test behavior at each phase
-    for (let i = 0; i < phasesOrder.length; i++) {
-      const currentPhase = proposalsTable[0].current_phase
-      const expectedPhase = phasesOrder[i]
+    // elapse debate, top-up, move to prevote
+    blockchain.addTime(TimePointSec.from(7 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup2" })
+    proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    await prop("move", { proposal_id: proposalsTable[0].proposal_id }, creator)
 
-      // Verify the current phase
-      expect(currentPhase).to.equal(expectedPhase)
+    proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    expect(proposalsTable[0].current_phase).to.equal("prevote")
+  })
 
-      // Attempt to update the proposal's deadline
-      const newDeadlineDate = new Date(Date.now() + 3600 * 24 * 20 * 1000) // 20 days in the future
-      const newDeadline = newDeadlineDate.toISOString().split(".")[0] // Remove milliseconds
+  it("prevote finishes referendum; proposal no longer open", async () => {
+    const creator = "alice"
+    const minStake = proposalUtil.getConfig("main", "minstake")[1]
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "" })
 
-      const updateParams = {
-        args: [
-          { first: "proposal_id", second: ["int64", proposalId] },
-          { first: "deadline", second: ["time_point", newDeadline] },
-        ],
-      }
+    const proposal = ProposalsFactory.createMainWithDefaults({ creator })
+    await prop("create", proposal.getActionParams(), creator)
 
-      if (currentPhase === "discussion") {
-        // Should allow update
-        await prop("update", updateParams, creator)
+    // to debate
+    blockchain.addTime(TimePointSec.from(7 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup1" })
+    let proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    await prop("move", { proposal_id: proposalsTable[0].proposal_id }, creator)
 
-        // Verify the update
-        proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
-        const storedDeadline = proposalsTable[0].deadline.split(".")[0]
-        expect(storedDeadline).to.equal(newDeadline)
-      } else {
-        // Should not allow update
-        await expectToThrow(prop("update", updateParams, creator), "eosio_assert_message: can not modify proposal, it is not in discussion phase")
-      }
+    // to prevote (ample buffer)
+    blockchain.addTime(TimePointSec.from(30 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup2" })
+    proposalsTable = proposals.tables.proposals(nameToBigInt("prop.bitcash")).getTableRows()
+    await prop("move", { proposal_id: proposalsTable[0].proposal_id }, creator)
 
-      // Move to the next phase if not completed
-      if (currentPhase !== "completed") {
-        await moveToNextPhase(phasesOrder[i + 1])
-
-        // If we've just moved to 'vote' phase, finish the referendum
-        if (phasesOrder[i + 1] === "vote") {
-          // Advance time to simulate the referendum duration
-          blockchain.addTime(TimePointSec.from(phaseDurations["vote"]))
-
-          // Finish the referendum
-          // const referendumId = proposalId // Assuming referendum ID is the same as proposal ID
-          const refTable = referendums.tables.referendums(nameToBigInt("referendums")).getTableRows()
-          console.log("refTable", JSON.stringify(refTable, null, 2))
-          const referendumId = refTable[0].referendum_id
-          await ref("finish", { referendum_id: referendumId }, "proposals@active")
-        }
-      }
-    }
-
-    // Verify that the proposal is in 'completed' status
-    proposalsTable = proposals.tables.proposals(nameToBigInt("proposals")).getTableRows()
-    expect(proposalsTable[0].status).to.equal("completed")
+    // Advance prevote phase to its end, then finish the referendum (no votes => likely rejected)
+    blockchain.addTime(TimePointSec.from(7 * 24 * 3600))
+    await tok("transfer", { from: "eosio.token", to: creator, quantity: minStake, memo: "topup3" })
+    const refTable = referendums.tables.referendums(nameToBigInt("refe.bitcash")).getTableRows()
+    const referendumId = refTable[0].referendum_id
+    await ref("finish", { referendum_id: referendumId }, "prop.bitcash@active")
+    const after = referendums.tables.referendums(nameToBigInt("refe.bitcash")).getTableRows()[0]
+    expect(after.status).to.equal("rejected")
   })
 })

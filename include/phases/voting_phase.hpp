@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base_phase.hpp"
+#include <string>
 
 
 class VotingPhase : public Phase {

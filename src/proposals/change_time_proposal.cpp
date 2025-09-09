@@ -17,13 +17,21 @@ void ChangeTimeProposal::create_impl(std::map<std::string, common::types::varian
 
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
-  // eosio::check(util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days")) < 5, 'Proposal can not be extended more than 5 days');
-  // total days can not be more than 40
+  int64_t debate_days = util::get_attr<int64_t>(args, "debate_days");
+  int64_t prevote_days = util::get_attr<int64_t>(args, "prevote_days");
+  int64_t voting_days = util::get_attr<int64_t>(args, "voting_days");
+
+  // Validate time parameters
+  eosio::check(debate_days >= 1 && debate_days <= 90, "debate_days must be between 1 and 90");
+  eosio::check(prevote_days >= 1 && prevote_days <= 14, "prevote_days must be between 1 and 14");
+  eosio::check(voting_days >= 1 && voting_days <= 90, "voting_days must be between 1 and 90");
+  eosio::check((debate_days + prevote_days + voting_days) <= 194, "total duration cannot exceed 194 days");
+
   proposals_t.modify(pitr, contract_name, [&](auto &item)
                      {
-    item.special_attributes.insert(std::make_pair("debate_days", util::get_attr<int64_t>(args, "debate_days")));
-    item.special_attributes.insert(std::make_pair("prevote_days", util::get_attr<int64_t>(args, "prevote_days")));
-    item.special_attributes.insert(std::make_pair("voting_days  ", util::get_attr<int64_t>(args, "voting_days"))); });
+    item.special_attributes.insert(std::make_pair("debate", debate_days));
+    item.special_attributes.insert(std::make_pair("prevote", prevote_days));
+    item.special_attributes.insert(std::make_pair("voting", voting_days)); });
 }
 
 void ChangeTimeProposal::update_impl(std::map<std::string, common::types::variant_value> &args)
@@ -36,20 +44,24 @@ void ChangeTimeProposal::update_impl(std::map<std::string, common::types::varian
   auto ppitr = proposals_t.find(pitr->parent);
 
   eosio::check(ppitr != proposals_t.end(), "Change time proposal must have an existing proposal parent");
-
-  eosio::check(ppitr->status == common::proposals::phase_debate, "Change time proposal can be only created when main proposal is on debate phase");
-
+  eosio::check(ppitr->current_phase == common::proposals::phase_debate, "Change time proposal can be only updated when main proposal is on debate phase");
   eosio::check(ppitr->awaiting.size() == 0, "This proposal is awaiting for other proposal to pass!");
 
-  // uint64_t days = util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days"));
-  // eosio::check(days < 5, 'Proposal can not be extended more than 5 days');
-  // eosio::check(util::get_attr<int64_t>(args, "days", pitr->special_attributes.at("days")) < 5, 'Proposal can not be extended more than 5 days');
+  int64_t debate_days = util::get_attr<int64_t>(args, "debate_days");
+  int64_t prevote_days = util::get_attr<int64_t>(args, "prevote_days");
+  int64_t voting_days = util::get_attr<int64_t>(args, "voting_days");
+
+  // Validate time parameters
+  eosio::check(debate_days >= 1 && debate_days <= 90, "debate_days must be between 1 and 90");
+  eosio::check(prevote_days >= 1 && prevote_days <= 14, "prevote_days must be between 1 and 14");
+  eosio::check(voting_days >= 1 && voting_days <= 90, "voting_days must be between 1 and 90");
+  eosio::check((debate_days + prevote_days + voting_days) <= 194, "total duration cannot exceed 194 days");
 
   proposals_t.modify(pitr, contract_name, [&](auto &item)
                      { 
-    item.special_attributes.insert(std::make_pair("debate", util::get_attr<int64_t>(args, "debate")));
-    item.special_attributes.insert(std::make_pair("prevote", util::get_attr<int64_t>(args, "prevote")));
-    item.special_attributes.insert(std::make_pair("voting", util::get_attr<int64_t>(args, "voting"))); });
+    item.special_attributes.insert(std::make_pair("debate", debate_days));
+    item.special_attributes.insert(std::make_pair("prevote", prevote_days));
+    item.special_attributes.insert(std::make_pair("voting", voting_days)); });
 }
 
 void ChangeTimeProposal::cancel_impl(std::map<std::string, common::types::variant_value> &args)

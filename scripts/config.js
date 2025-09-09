@@ -21,32 +21,55 @@ const supportedChains = {
   telosMainnet: "telosMainnet",
   jungleTestnet: "jungleTestnet",
   eosMainnet: "eosMainnet",
+  layer1: "layer1",
+};
+
+// Network-specific endpoints with environment variable overrides
+const endpointsByChain = {
+  [supportedChains.local]: process.env.LOCAL_ENDPOINT || process.env.ENDPOINT || "http://127.0.0.1:8888",
+  [supportedChains.jungleTestnet]: process.env.JUNGLE_TESTNET_ENDPOINT || "https://jungle4.api.eosnation.io",
+  [supportedChains.telosTestnet]: process.env.TELOS_TESTNET_ENDPOINT || "https://testnet.telos.net",
+  [supportedChains.telosMainnet]: process.env.TELOS_MAINNET_ENDPOINT || "https://mainnet.telos.net",
+  [supportedChains.eosMainnet]: process.env.EOS_MAINNET_ENDPOINT || "https://api.eosn.io",
+  [supportedChains.layer1]: process.env.LAYER1_ENDPOINT || "https://api.np.animus.is",
+};
+
+// Get contract names from environment variables or use defaults
+const getContractName = (envVar, defaultValue) => {
+  return process.env[envVar] || defaultValue;
 };
 
 const contractsConfig = {
   [supportedChains.local]: [
     contract("nullcontract", "m1nullcntrct"),
-    contract("referendums", "eospropvotes"),
-    contract("proposals", "eosmakeprops"),
-    contract("token", "eosio.token"),
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "eospropvotes")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "eosmakeprops")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "eosio.token")),
   ],
   [supportedChains.jungleTestnet]: [
-    contract("referendums", "referendums1"),
-    contract("proposals", "tlaproposals"),
-    contract("token", "tlatesttoken"),
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "referendums1")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "tlaproposals")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "tlatesttoken")),
   ],
   [supportedChains.telosTestnet]: [
-    contract("referendums", "referendums1"),
-    contract("proposals", "tlaproposals"),
-    contract("token", "tlatesttoken"),
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "referendums1")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "tlaproposals")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "tlatesttoken")),
   ],
-  [supportedChains.telosTestnet]: [
-    contract("referendums", "testrefendum"),
-    contract("proposals", "testproposal"),
+  [supportedChains.telosMainnet]: [
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "refe.bitcash")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "prop.bitcash")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "eosio.token")),
+  ],
+  [supportedChains.layer1]: [
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "refe.bitcash")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "prop.bitcash")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "eosio.token")),
   ],
   [supportedChains.eosMainnet]: [
-    contract("referendums", "eospropvotes"),
-    contract("proposals", "eosmakeprops"),
+    contract("referendums", getContractName("REFERENDUMS_ACCOUNT", "eospropvotes")),
+    contract("proposals", getContractName("PROPOSALS_ACCOUNT", "eosmakeprops")),
+    contract("token", getContractName("TOKEN_ACCOUNT", "eosio.token")),
   ],
 };
 
@@ -54,6 +77,8 @@ const ownerByChain = {
   [supportedChains.local]: "eosio",
   [supportedChains.jungleTestnet]: "tlalocman123",
   [supportedChains.telosTestnet]: "tlaclocmant2",
+  [supportedChains.telosMainnet]: process.env.OWNER_ACCOUNT || "eosio",
+  [supportedChains.layer1]: process.env.OWNER_ACCOUNT || "eosio",
   [supportedChains.eosMainnet]: "erick.bk",
 };
 
@@ -63,6 +88,7 @@ const ownerPublicKeys = {
 };
 
 const chain = process.env.CHAIN_NAME;
+const endpoint = endpointsByChain[chain];
 
 const owner = ownerByChain[chain];
 const publicKeys = ownerPublicKeys;
@@ -108,6 +134,7 @@ module.exports = {
   isLocalNode,
   sleep,
   chain,
+  endpoint,
   permissionsConfig,
   devKey,
 };

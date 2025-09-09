@@ -10,6 +10,9 @@ This contract contains the necessary actions to create a new proposal, modify it
 | --------- | --------------------------------------------------------------------- |
 | main      | Main proposal                                                         |
 | amendment | A minor change or addition designed to improve the selected proposal. |
+| extenddebate | Child proposal that increases current parent phase duration          |
+| shortndebate | Child proposal that decreases current parent phase duration (floor 1) |
+| changetime   | Child proposal that sets parent phase durations (debate/prevote/voting) |
 
 </br>
 
@@ -31,7 +34,7 @@ This contract contains the necessary actions to create a new proposal, modify it
 | debate     | Users can discuss the proposal.      |
 | prevote    | It is a voting phase to go to voting |
 | voting     | Proposal is in voting phase.         |
-| accpeted   | Proposal has been approved.          |
+| approved   | Proposal has been approved.          |
 | rejected   | Proposal has been rejected.          |
 
 </br>
@@ -40,10 +43,10 @@ This contract contains the necessary actions to create a new proposal, modify it
 
 | Type    | Description                                  |
 | ------- | -------------------------------------------- |
-| nophase | No defined phase, it is used to test errors. |
-| draft   | Draft phase, proposal it can be modified.    |
-| dialog  | Users can discuss the proposals.             |
-| voting  | Proposal is in voting phase.                 |
+| nophase | No defined phase (internal)            |
+| draft   | Draft phase (not currently used)       |
+| dialog  | Non-voting discussion phase            |
+| voting  | Voting phase                           |
 
 </br>
 
@@ -104,7 +107,7 @@ example:
 | title                             | string        | Proposal title                            |
 | description                       | string        | Proposal description                      |
 | kpi                               | string        | Key perfomance indicator                  |
-| dead_line                         | time_point    | Proposal deadline                         |
+| deadline                          | time_point    | Proposal deadline                         |
 | parent                            | int64_t       | Marks if the proposal has a parent        |
 | [special_attributes](#reference3) | variant_value | May vary depending on the proposal's type |
 
@@ -155,7 +158,7 @@ N / A
 | title                             | string        | Proposal title                            |
 | description                       | string        | Proposal description                      |
 | kpi                               | string        | Key perfomance indicator                  |
-| dead_line                         | time_point    | Proposal deadline                         |
+| deadline                          | time_point    | Proposal deadline                         |
 | parent                            | int64_t       | Marks if the proposal has a parent        |
 | [special_attributes](#reference3) | variant_value | May vary depending on the proposal's type |
 
@@ -185,10 +188,9 @@ N / A
 
 ### Description:
 
-Changes the phase of the proposal.
-draft -> debate -> prevote -> vote
+Changes the phase of the proposal based on time boundaries. At voting phases, a referendum is created and started on `refe.bitcash`.
 
-### Required permission: `creator@active`
+### Required permission: `creator@active` or `prop.bitcash@active`
 
 ### Inline actions:
 
@@ -196,8 +198,8 @@ Voting phase
 
 | actions              | permission       |
 | -------------------- | ---------------- |
-| referendums1::create | `creator@active` |
-| referendums1::start  | `creator@active` |
+| referendums::create  | `prop.bitcash@active` |
+| referendums::start   | `prop.bitcash@active` |
 
 <!-- I'm not sure if inline actions are like above,
 I saw both actions in voting_phase.cpp
@@ -216,14 +218,11 @@ but i don't figure out if @creator calls the action-->
 
 ### Description:
 
-This action define all the phases of each proposal type as:
+Defines default phases per proposal type:
 
-- The main proposals has these phases:
-  Discussion -> Debate -> Voting for going voting -> Voting for approval
-- The rest of the proposals (amendment, extenddebate & shortndebate) have these phases:
-  Discussion -> Debate -> Voting for approval
+- Example (main): Discussion -> Debate -> Prevote (voting) -> Voting (voting)
 
-### Required permission: `self@active`
+### Required permission: `prop.bitcash@active`
 
 ### Inline actions:
 
@@ -257,8 +256,8 @@ N / A
 | Type                                                                 | Name    | Description                       |
 | -------------------------------------------------------------------- | ------- | --------------------------------- |
 | name                                                                 | scope   | Proposal scope                    |
-| name                                                                 | setting | Proposal settings                 |
-| [`std::map<std::string, common::types::variant_value>`](#reference2) | value   | Basic information of the proposal |
+| name                                                                 | setting | Proposal setting (`minstake`, `quorum`, `votethresh`) |
+| [`common::types::variant_value`](#reference2)                         | value   | New value                         |
 
 ---
 

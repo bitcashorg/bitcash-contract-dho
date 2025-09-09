@@ -21,10 +21,24 @@ void Proposal::create(std::map<std::string, common::types::variant_value> &args)
 
   eosio::name type = util::get_attr<eosio::name>(args, "type");
 
+  // Validate that the provided deadline is in the future
+  eosio::time_point supplied_deadline = util::get_attr<eosio::time_point>(args, "deadline");
+  eosio::check(supplied_deadline > eosio::current_time_point(),
+               "proposal deadline must be in the future");
+
   proposals::phases_config_tables pconfig_t(contract_name, contract_name.value);
   auto pcitr = pconfig_t.require_find(type.value, ("default phases configuration does not exist for proposal type: " + type.to_string()).c_str());
 
   uint64_t proposal_id = util::format_id(proposals_t.available_primary_key());
+
+  // Ensure that the proposal is not its own parent
+  int64_t parent_candidate = util::get_attr<int64_t>(
+    args,
+    "parent",
+    std::optional<common::types::variant_value>(int64_t(0))
+  );
+  eosio::check(parent_candidate == 0 || parent_candidate != int64_t(proposal_id),
+              "proposal parent cannot be the proposal itself");
 
   proposals_t.emplace(contract_name, [&](auto &item)
                       {
@@ -41,9 +55,21 @@ void Proposal::create(std::map<std::string, common::types::variant_value> &args)
         item.current_phase = default_phase.phase;
       }
       item.phases.push_back(common::types::factory::create_phase_entry(
-        util::get_attr<eosio::name>(args, util::to_str("phase_", default_phase.phase, "_name"), default_phase.phase),
-        int16_t(util::get_attr<int64_t>(args, util::to_str("phase_", default_phase.phase, "_duration_days"), int64_t(default_phase.duration_days))),
-        util::get_attr<eosio::name>(args, util::to_str("phase_", default_phase.phase, "_type"), default_phase.type),
+        util::get_attr<eosio::name>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_name"),
+          std::optional<common::types::variant_value>(default_phase.phase)
+        ),
+        int16_t(util::get_attr<int64_t>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_duration_days"),
+          std::optional<common::types::variant_value>(int64_t(default_phase.duration_days))
+        )),
+        util::get_attr<eosio::name>(
+          args,
+          util::to_str("phase_", default_phase.phase, "_type"),
+          std::optional<common::types::variant_value>(default_phase.type)
+        ),
         first_phase ? eosio::current_time_point() : eosio::time_point(eosio::microseconds(0))
       ));
       first_phase = false;
@@ -66,8 +92,24 @@ void Proposal::update(std::map<std::string, common::types::variant_value> &args)
       pitr->current_phase == common::proposals::phase_discussion,
       util::to_str("can not modify proposal, it is not in ", common::proposals::phase_discussion, " phase"));
 
+  // If a new deadline is provided in args, validate it is in the future
+  auto deadlineArgIt = args.find("deadline");
+  if (deadlineArgIt != args.end())
+  {
+    // Harden type safety: surface a clear error instead of aborting on std::get mismatch
+    eosio::check(std::holds_alternative<eosio::time_point>(deadlineArgIt->second),
+                 "attribute deadline type mismatch");
+    eosio::time_point supplied_deadline = std::get<eosio::time_point>(deadlineArgIt->second);
+    eosio::check(supplied_deadline > eosio::current_time_point(),
+                 "proposal deadline must be in the future");
+  }
+
   proposals_t.modify(pitr, contract_name, [&](auto &item)
-                     { item.deadline = util::get_attr<eosio::time_point>(args, "deadline", pitr->deadline); });
+                     { item.deadline = util::get_attr<eosio::time_point>(
+                         args,
+                         "deadline",
+                         std::optional<common::types::variant_value>(pitr->deadline)
+                       ); });
 
   update_impl(args);
 }
@@ -91,8 +133,8 @@ void Proposal::move(std::map<std::string, common::types::variant_value> &args)
 {
   int64_t proposal_id = util::get_attr<int64_t>(args, "proposal_id");
 
-  Transition *transition = new Transition(m_contract);
-  transition->execute(proposal_id);
+  Transition transition(m_contract);
+  transition.execute(proposal_id);
 }
 
 void Proposal::create_impl(std::map<std::string, common::types::variant_value> &args) {}

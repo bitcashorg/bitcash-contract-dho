@@ -16,23 +16,23 @@ cleos set account permission proposals active \
 
 # Main proposal parameters
 cleos push action proposals setgparam '["main", "minstake", ["asset", "1.0000 IMPACT"]]' -p proposals@active
-cleos push action proposals setgparam '["main", "quorum", ["asset", "1000.0000 IMPACT"]]' -p proposals@active
+cleos push action proposals setgparam '["main", "quorum", ["asset", "100.0000 IMPACT"]]' -p proposals@active
 
 # Amendment proposal parameters  
 cleos push action proposals setgparam '["amendment", "minstake", ["asset", "1.0000 IMPACT"]]' -p proposals@active
-cleos push action proposals setgparam '["amendment", "quorum", ["asset", "1000.0000 IMPACT"]]' -p proposals@active
+cleos push action proposals setgparam '["amendment", "quorum", ["asset", "100.0000 IMPACT"]]' -p proposals@active
 
 # Change time proposal parameters
 cleos push action proposals setgparam '["changetime", "minstake", ["asset", "1.0000 IMPACT"]]' -p proposals@active  
-cleos push action proposals setgparam '["changetime", "quorum", ["asset", "1000.0000 IMPACT"]]' -p proposals@active
+cleos push action proposals setgparam '["changetime", "quorum", ["asset", "100.0000 IMPACT"]]' -p proposals@active
 
 # Extend debate proposal parameters
 cleos push action proposals setgparam '["extenddebate", "minstake", ["asset", "1.0000 IMPACT"]]' -p proposals@active
-cleos push action proposals setgparam '["extenddebate", "quorum", ["asset", "1000.0000 IMPACT"]]' -p proposals@active
+cleos push action proposals setgparam '["extenddebate", "quorum", ["asset", "100.0000 IMPACT"]]' -p proposals@active
 
 # Shorten debate proposal parameters  
 cleos push action proposals setgparam '["shortndebate", "minstake", ["asset", "1.0000 IMPACT"]]' -p proposals@active
-cleos push action proposals setgparam '["shortndebate", "quorum", ["asset", "1000.0000 IMPACT"]]' -p proposals@active
+cleos push action proposals setgparam '["shortndebate", "quorum", ["asset", "100.0000 IMPACT"]]' -p proposals@active
 
 
 

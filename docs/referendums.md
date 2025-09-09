@@ -28,7 +28,7 @@ Please check out, I'm not sure is it 'in' or 'on'.
 ## **reset**
 ### Description: 
 Resets tables: referendum_tables & vote_tables
-### Required permission: `self@active`
+### Required permission: `refe.bitcash@active` or `prop.bitcash@active`
 ### Inline actions
 N / A
 ### Parameters
@@ -58,7 +58,8 @@ N / A
 | uint64_t | referendum_id | Referendum id |
 | name | creator | Creator's name |
 | time_point | start_date | Referendum's start day |
-| time:point | end_date | Referendum's end date |
+| time_point | end_date | Referendum's end date |
+| asset | quorum | Absolute quorum threshold (IMPACT) |
 | [`std::vector<common::types::day_percentage>`](#reference1) | quorum_config | Configuring Quorum Requirements |
 | [`std::vector<common::types::day_percentage>`](#reference1) | majority_config | Configuration of the requirements for the majority |
 
@@ -70,7 +71,7 @@ Note: See data types section for more information
 ### Description: 
 Changes referendums status to started, users can vote now. 
 Referendum status: started
-### Required permission: `creator@active`
+### Required permission: `creator@active` or `prop.bitcash@active` or `refe.bitcash@active`
 ### Inline actions:
 N / A
 #### Parameters:
@@ -84,7 +85,7 @@ N / A
 ### Description: 
 Pauses the selected referendum.
 Referendum status: hold
-### Require permission: `creator@active`
+### Require permission: `refe.bitcash@active`
 ### Inline actions:
 N / A
 ### Parameters:
@@ -98,7 +99,7 @@ N / A
 ### Description: 
 Resume a referendum that was on pause
 Referendum status: started
-### Require presmission: `creator@active`
+### Require presmission: `refe.bitcash@active`
 ### Inline actions: 
 N / A
 ### Parameters: 
@@ -112,8 +113,11 @@ N / A
 ### Description: 
 Ends the selected referendum. Depending on votes, referendum can be accepted or rejected.
 Referendum status: accepted / rejected 
-### Require permission: `creator@active`
-### Require permission to finish before time: `self@active`
+### Require permission: `creator@active` or `prop.bitcash@active` or `refe.bitcash@active`
+### Guards:
+ - Must be in `started` status
+ - If not `refe.bitcash`, now must be ≥ `end_date`
+ - If `refe.bitcash`, now must be ≥ `start_date + 24h`
 ### Inline actions: 
 N / A
 ### Parameters:
@@ -127,6 +131,11 @@ N / A
 ### Description
 Sends user's vote.
 ### Require permission: `voter@active`
+### Guards:
+ - Referendum must be `started`
+ - One vote per account
+ - Voter must hold IMPACT balance > 0
+ - Option must be one of `yes`, `no`, `abstain`
 ### Inline actions:
 N / A
 ### Parameters
@@ -171,9 +180,12 @@ Note: User's vote can be
 | time_point | start_date | Mark the start date of the referendum |
 | time_point | end_date | Mark the end date of the referendum |
 | name | status | Referendum status |
+| asset | quorum | Absolute quorum threshold (IMPACT) |
 | [`std::vector<common::types::day_percentage>`](#reference1) | quorum_config | Configuring Quorum Requirements |
 | [`std::vector<common::types::day_percentage>`](#reference1) | majority_config | Configuration of the requirements for the majority |
-| `std::map<eosio::name, eosio::asset>` | vote_tally | Stores the amount and type of votes |
+| asset | votes_favour | Tally of favour votes (recomputed at finish) |
+| asset | votes_against | Tally of against votes (recomputed at finish) |
+| asset | votes_abstain | Tally of abstain votes (recomputed at finish) |
 
 ---
 
@@ -186,7 +198,7 @@ Note: User's vote can be
 --- 
 
 ## **stat**
-## EOSIO tanle name: currency_stats
+## EOSIO table name: currency_stats
 | Type | name | Description |
 | -- | -- | -- |
 | asset | supply | Number of tokens issued |
@@ -200,7 +212,7 @@ Note: User's vote can be
 | Type | name | Description |
 | -- | -- | -- |
 | name | voter | Voter's name |
-| asset | amount | Number of tokens a user has |
+| asset | amount | Snapshot of voter's balance at vote time |
 | name | option | User's vote (yes, abstain, no) |
 | uint32_t | weight | User's vote weight |
 

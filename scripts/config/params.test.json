@@ -1,22 +1,52 @@
 {
   "main": {
-    "minstake": ["asset", "100.0000 MOCKEOS"]
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ],
+    "quorum": [
+      "asset",
+      "100.0000 IMPACT"
+    ]
   },
-
   "amendment": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ],
+    "quorum": [
+      "asset",
+      "100.0000 IMPACT"
+    ]
   },
-
   "changetime": {
-    "minstake": ["asset", "1.0000 MOCKEOS"]
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ],
+    "quorum": [
+      "asset",
+      "100.0000 IMPACT"
+    ]
   },
-
   "extenddebate": {
-    "minstake": ["asset", "10.0000 MOCKEOS"]
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ],
+    "quorum": [
+      "asset",
+      "100.0000 IMPACT"
+    ]
   },
-
   "shortndebate": {
-    "minstake": ["asset", "10.0000 MOCKEOS"]
+    "minstake": [
+      "asset",
+      "1.0000 IMPACT"
+    ],
+    "quorum": [
+      "asset",
+      "100.0000 IMPACT"
+    ]
   }
-
 }

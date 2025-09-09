@@ -1,6 +1,6 @@
 #pragma once
 
-#include <proposals.hpp>
+#include "../proposals.hpp"
 
 class Phase {
 

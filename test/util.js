@@ -1,8 +1,8 @@
 import { Blockchain, nameToBigInt, expectToThrow, AccountPermission } from "@eosnetwork/vert"
 import { Authority, Name, PermissionLevel, PermissionLevelWeight, UInt16, UInt32 } from "@greymass/eosio"
 export const blockchain = new Blockchain()
-export const referendums = blockchain.createContract("eospropvotes", "../build/referendums")
-export const proposals = blockchain.createContract("proposals", "../build/proposals")
+export const referendums = blockchain.createContract("refe.bitcash", "../build/referendums")
+export const proposals = blockchain.createContract("prop.bitcash", "../build/proposals")
 export const token = blockchain.createContract("eosio.token", "../build/token")
 referendums.setPermissions([
   AccountPermission.from({
@@ -13,7 +13,7 @@ referendums.setPermissions([
       keys: [],
       accounts: [
         PermissionLevelWeight.from({
-          permission: PermissionLevel.from("eospropvotes@eosio.code"),
+          permission: PermissionLevel.from("refe.bitcash@eosio.code"),
           weight: UInt16.from(1),
         }),
       ],
@@ -28,11 +28,11 @@ referendums.setPermissions([
       keys: [],
       accounts: [
         PermissionLevelWeight.from({
-          permission: PermissionLevel.from("eospropvotes@eosio.code"),
+          permission: PermissionLevel.from("refe.bitcash@eosio.code"),
           weight: UInt16.from(1),
         }),
         PermissionLevelWeight.from({
-          permission: PermissionLevel.from("proposals@eosio.code"),
+          permission: PermissionLevel.from("prop.bitcash@eosio.code"),
           weight: UInt16.from(1),
         }),
       ],
@@ -58,8 +58,10 @@ const contracts = { referendums, proposals, token }
  * @returns {Promise<any>} - The action's result.
  */
 export async function act(contractName, actionName, data, auth) {
-  if (!auth) auth = contractName + "@active"
-  return contracts[contractName].actions[actionName](data).send(auth)
+  const acct = contracts[contractName]
+  const acctName = acct?.name?.toString?.() || contractName
+  if (!auth) auth = acctName + "@active"
+  return acct.actions[actionName](data).send(auth)
 }
 export async function prop(actionName, data, auth) {
   // console.log("prop", actionName, data, auth)
@@ -112,7 +114,7 @@ export async function setGeneralConfig(config, auth) {
  * @param {object} config - Configuration data.
  * @param {string} auth - Authorization string.
  */
-export async function applyPropConfig(type, config, auth = "proposals@active") {
+export async function applyPropConfig(type, config, auth = "prop.bitcash@active") {
   if (type === "phases") {
     await setPhases(config, auth)
   } else if (type === "general") {
